@@ -2081,73 +2081,236 @@ Can use protocols for polymorphism</li>
 </ol>
 <hr />
 <p><strong>Next</strong>: <a href="swift/./11-protocol-vs-class.html">Q11: Protocol vs Class Inheritance →</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="q11-protocol-vs-class"><a class="header" href="#q11-protocol-vs-class">Q11: Protocol vs Class</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q11-protocol-vs-class-inheritance"><a class="header" href="#q11-protocol-vs-class-inheritance">Q11: Protocol vs Class Inheritance</a></h1>
 <h2 id="-the-answer-9"><a class="header" href="#-the-answer-9">🎯 The Answer</a></h2>
-<p>Protocols: multiple adoption, no implementation. Classes: single inheritance, has implementation</p>
+<p><strong>Protocols</strong>: Multiple adoption, no default implementation (unless extension), works with all types
+<strong>Classes</strong>: Single inheritance, provides implementation, classes only</p>
 <h2 id="-deep-dive-9"><a class="header" href="#-deep-dive-9">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// PROTOCOLS - Multiple Adoption
+protocol Flyable {
+    func fly()
+}
+
+protocol Swimmable {
+    func swim()
+}
+
+struct Duck: Flyable, Swimmable {  // ✅ Multiple protocols
+    func fly() { print(&quot;Duck flying&quot;) }
+    func swim() { print(&quot;Duck swimming&quot;) }
+}
+
+// CLASSES - Single Inheritance
+class Animal {
+    func breathe() { print(&quot;Breathing&quot;) }
+}
+
+class Mammal: Animal {
+    func nurse() { print(&quot;Nursing&quot;) }
+}
+
+class Dog: Mammal {  // ✅ Inherits from Mammal (and Animal)
+    func bark() { print(&quot;Barking&quot;) }
+}
+
+// class Cat: Mammal, Animal { }  // ❌ Can't inherit from multiple classes
 </code></pre>
-<h2 id="-common-pitfalls-9"><a class="header" href="#-common-pitfalls-9">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
+<h3 id="key-differences-1"><a class="header" href="#key-differences-1">Key Differences</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Protocol</th><th>Class Inheritance</th></tr></thead><tbody>
+<tr><td>Multiple</td><td>✅ Yes</td><td>❌ No (single only)</td></tr>
+<tr><td>Value Types</td><td>✅ Yes</td><td>❌ No</td></tr>
+<tr><td>Implementation</td><td>Extension only</td><td>✅ Yes</td></tr>
+<tr><td>Override</td><td>No concept</td><td>✅ Yes</td></tr>
+<tr><td>Polymorphism</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+</tbody></table>
+</div>
+<h3 id="when-to-use-protocols"><a class="header" href="#when-to-use-protocols">When to Use Protocols</a></h3>
+<pre><code class="language-swift">// Composition over inheritance
+protocol Purchasable {
+    var price: Double { get }
+}
+
+protocol Downloadable {
+    func download()
+}
+
+protocol Streamable {
+    func stream()
+}
+
+struct Movie: Purchasable, Downloadable, Streamable {
+    let price: Double
+    func download() { }
+    func stream() { }
+}
+
+struct Song: Purchasable, Downloadable, Streamable {
+    let price: Double
+    func download() { }
+    func stream() { }
+}
+</code></pre>
+<h3 id="when-to-use-class-inheritance"><a class="header" href="#when-to-use-class-inheritance">When to Use Class Inheritance</a></h3>
+<pre><code class="language-swift">// Shared implementation
+class UIView {
+    var frame: CGRect
+    func draw() { /* complex drawing */ }
+}
+
+class UIButton: UIView {
+    var title: String
+    // Inherits frame and draw()
+}
+
+class UILabel: UIView {
+    var text: String
+    // Inherits frame and draw()
+}
+</code></pre>
 <h2 id="-interview-tips-9"><a class="header" href="#-interview-tips-9">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-7"><a class="header" href="#-practice-challenge-7">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Protocols enable multiple conformance and work with value types, making them more flexible than class inheritance. I use protocols for capabilities and behaviors, and class inheritance when I need to share implementation. Swift favors protocol-oriented programming because it's more composable and testable.&quot;</p>
 <h2 id="-mastery-checklist-10"><a class="header" href="#-mastery-checklist-10">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Know protocols allow multiple adoption</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Understand single inheritance limitation</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can choose appropriate approach</li>
+<li><input disabled="" type="checkbox"/>
+Know composition over inheritance</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="q12-associated-types"><a class="header" href="#q12-associated-types">Q12: Associated Types</a></h1>
+<p><strong>Next</strong>: <a href="swift/./12-associated-types.html">Q12: Associated Types →</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q12-associated-types-in-protocols"><a class="header" href="#q12-associated-types-in-protocols">Q12: Associated Types in Protocols</a></h1>
 <h2 id="-the-answer-10"><a class="header" href="#-the-answer-10">🎯 The Answer</a></h2>
-<p>Placeholder type in protocol, defined by conforming type</p>
+<p>Associated types are placeholder types in protocols, defined by conforming types. They're like generics for protocols, enabling type-safe, flexible protocol definitions.</p>
 <h2 id="-deep-dive-10"><a class="header" href="#-deep-dive-10">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">protocol Container {
+    associatedtype Item  // Placeholder type
+    
+    var count: Int { get }
+    mutating func append(_ item: Item)
+    subscript(i: Int) -&gt; Item { get }
+}
+
+struct IntStack: Container {
+    typealias Item = Int  // Define the associated type
+    
+    private var items: [Int] = []
+    
+    var count: Int {
+        items.count
+    }
+    
+    mutating func append(_ item: Int) {
+        items.append(item)
+    }
+    
+    subscript(i: Int) -&gt; Int {
+        items[i]
+    }
+}
+
+struct StringStack: Container {
+    // Item inferred as String
+    private var items: [String] = []
+    
+    var count: Int { items.count }
+    
+    mutating func append(_ item: String) {
+        items.append(item)
+    }
+    
+    subscript(i: Int) -&gt; String {
+        items[i]
+    }
+}
 </code></pre>
-<h2 id="-common-pitfalls-10"><a class="header" href="#-common-pitfalls-10">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
+<h3 id="type-inference"><a class="header" href="#type-inference">Type Inference</a></h3>
+<pre><code class="language-swift">protocol Container {
+    associatedtype Item
+    mutating func append(_ item: Item)
+}
+
+struct Stack: Container {
+    private var items: [Int] = []
+    
+    mutating func append(_ item: Int) {  // Item inferred as Int
+        items.append(item)
+    }
+}
+</code></pre>
+<h3 id="constraints-on-associated-types"><a class="header" href="#constraints-on-associated-types">Constraints on Associated Types</a></h3>
+<pre><code class="language-swift">protocol SortableContainer {
+    associatedtype Item: Comparable  // Item must be Comparable
+    var items: [Item] { get }
+    func sorted() -&gt; [Item]
+}
+
+struct NumberContainer: SortableContainer {
+    let items: [Int]
+    
+    func sorted() -&gt; [Int] {
+        items.sorted()
+    }
+}
+</code></pre>
+<h3 id="using-associated-types-in-functions"><a class="header" href="#using-associated-types-in-functions">Using Associated Types in Functions</a></h3>
+<pre><code class="language-swift">// Can't use protocol with associated type directly
+// func process(_ container: Container) { }  // ❌ Error
+
+// Use generics instead
+func process&lt;C: Container&gt;(_ container: C) where C.Item == Int {
+    // C is any Container where Item is Int
+}
+
+// Or use type erasure
+struct AnyContainer&lt;T&gt;: Container {
+    typealias Item = T
+    
+    private let _count: () -&gt; Int
+    private let _append: (T) -&gt; Void
+    private let _subscript: (Int) -&gt; T
+    
+    init&lt;C: Container&gt;(_ container: C) where C.Item == T {
+        var mutableContainer = container
+        _count = { container.count }
+        _append = { mutableContainer.append($0) }
+        _subscript = { container[$0] }
+    }
+    
+    var count: Int { _count() }
+    mutating func append(_ item: T) { _append(item) }
+    subscript(i: Int) -&gt; T { _subscript(i) }
+}
+</code></pre>
 <h2 id="-interview-tips-10"><a class="header" href="#-interview-tips-10">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-8"><a class="header" href="#-practice-challenge-8">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Associated types let protocols work with different types while maintaining type safety. They're like generics for protocols. For example, Array's Element is an associated type. I use them when a protocol needs to work with a type that conforming types will define.&quot;</p>
 <h2 id="-mastery-checklist-11"><a class="header" href="#-mastery-checklist-11">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Understand associated types</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Can constrain associated types</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Know type inference</li>
+<li><input disabled="" type="checkbox"/>
+Understand generic constraints</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./13-extensions.html">Q13: Extensions →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q13-extensions"><a class="header" href="#q13-extensions">Q13: Extensions</a></h1>
 <h2 id="-the-answer-11"><a class="header" href="#-the-answer-11">🎯 The Answer</a></h2>
 <p>Add functionality to existing types without subclassing</p>
 <h2 id="-deep-dive-11"><a class="header" href="#-deep-dive-11">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-11"><a class="header" href="#-common-pitfalls-11">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-9"><a class="header" href="#-common-pitfalls-9">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-11"><a class="header" href="#-interview-tips-11">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-9"><a class="header" href="#-practice-challenge-9">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-7"><a class="header" href="#-practice-challenge-7">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2171,11 +2334,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-12"><a class="header" href="#-deep-dive-12">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-12"><a class="header" href="#-common-pitfalls-12">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-10"><a class="header" href="#-common-pitfalls-10">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-12"><a class="header" href="#-interview-tips-12">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-10"><a class="header" href="#-practice-challenge-10">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-8"><a class="header" href="#-practice-challenge-8">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2199,11 +2362,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-13"><a class="header" href="#-deep-dive-13">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-13"><a class="header" href="#-common-pitfalls-13">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-11"><a class="header" href="#-common-pitfalls-11">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-13"><a class="header" href="#-interview-tips-13">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-11"><a class="header" href="#-practice-challenge-11">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-9"><a class="header" href="#-practice-challenge-9">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2227,11 +2390,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-14"><a class="header" href="#-deep-dive-14">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-14"><a class="header" href="#-common-pitfalls-14">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-12"><a class="header" href="#-common-pitfalls-12">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-14"><a class="header" href="#-interview-tips-14">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-12"><a class="header" href="#-practice-challenge-12">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-10"><a class="header" href="#-practice-challenge-10">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2255,11 +2418,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-15"><a class="header" href="#-deep-dive-15">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-15"><a class="header" href="#-common-pitfalls-15">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-13"><a class="header" href="#-common-pitfalls-13">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-15"><a class="header" href="#-interview-tips-15">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-13"><a class="header" href="#-practice-challenge-13">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-11"><a class="header" href="#-practice-challenge-11">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2283,11 +2446,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-16"><a class="header" href="#-deep-dive-16">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-16"><a class="header" href="#-common-pitfalls-16">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-14"><a class="header" href="#-common-pitfalls-14">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-16"><a class="header" href="#-interview-tips-16">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-14"><a class="header" href="#-practice-challenge-14">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-12"><a class="header" href="#-practice-challenge-12">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2311,11 +2474,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-17"><a class="header" href="#-deep-dive-17">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-17"><a class="header" href="#-common-pitfalls-17">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-15"><a class="header" href="#-common-pitfalls-15">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-17"><a class="header" href="#-interview-tips-17">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-15"><a class="header" href="#-practice-challenge-15">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-13"><a class="header" href="#-practice-challenge-13">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -2339,11 +2502,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-18"><a class="header" href="#-deep-dive-18">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-18"><a class="header" href="#-common-pitfalls-18">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-16"><a class="header" href="#-common-pitfalls-16">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-18"><a class="header" href="#-interview-tips-18">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-16"><a class="header" href="#-practice-challenge-16">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-14"><a class="header" href="#-practice-challenge-14">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
