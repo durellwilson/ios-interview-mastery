@@ -1223,110 +1223,390 @@ Know ARC limitations</li>
 <p><strong>Next</strong>: <a href="swift/./04-reference-types.html">Q4: Strong, Weak, Unowned →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q4-strong-weak-unowned"><a class="header" href="#q4-strong-weak-unowned">Q4: Strong, Weak, Unowned</a></h1>
 <h2 id="-the-answer-2"><a class="header" href="#-the-answer-2">🎯 The Answer</a></h2>
-<p><strong>Strong</strong> (default): Increases reference count, keeps object alive
-<strong>Weak</strong>: Doesn't increase count, becomes nil when deallocated (optional)
-<strong>Unowned</strong>: Doesn't increase count, crashes if accessed after deallocation (non-optional)</p>
+<ul>
+<li><strong>Strong</strong> (default): Increases reference count, keeps object alive</li>
+<li><strong>Weak</strong>: Optional, doesn't increase count, becomes <code>nil</code> when object deallocated</li>
+<li><strong>Unowned</strong>: Non-optional, doesn't increase count, crashes if accessed after deallocation</li>
+</ul>
 <h2 id="-deep-dive-2"><a class="header" href="#-deep-dive-2">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">class Person {
     let name: String
-    weak var friend: Person?        // weak
-    unowned let parent: Person      // unowned
-    var pet: Pet?                   // strong (default)
+    var apartment: Apartment?
     
-    init(name: String, parent: Person) {
+    init(name: String) {
         self.name = name
-        self.parent = parent
+        print(&quot;\(name) is initialized&quot;)
+    }
+    
+    deinit {
+        print(&quot;\(name) is deallocated&quot;)
+    }
+}
+
+class Apartment {
+    let unit: String
+    weak var tenant: Person?  // ✅ weak prevents retain cycle
+    
+    init(unit: String) {
+        self.unit = unit
+    }
+    
+    deinit {
+        print(&quot;Apartment \(unit) is deallocated&quot;)
+    }
+}
+
+// Usage
+var john: Person? = Person(name: &quot;John&quot;)
+var unit4A: Apartment? = Apartment(unit: &quot;4A&quot;)
+
+john?.apartment = unit4A
+unit4A?.tenant = john
+
+john = nil  // Both deallocated because weak broke the cycle
+unit4A = nil
+</code></pre>
+<h3 id="when-to-use-each"><a class="header" href="#when-to-use-each">When to Use Each</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Type</th><th>Use When</th><th>Example</th></tr></thead><tbody>
+<tr><td><strong>Strong</strong></td><td>Default ownership</td><td>Properties, variables</td></tr>
+<tr><td><strong>Weak</strong></td><td>Optional relationship, might be nil</td><td>Delegates, parent references</td></tr>
+<tr><td><strong>Unowned</strong></td><td>Non-optional, guaranteed to exist</td><td>Child to parent (parent owns child)</td></tr>
+</tbody></table>
+</div>
+<h3 id="unowned-example"><a class="header" href="#unowned-example">Unowned Example</a></h3>
+<pre><code class="language-swift">class Customer {
+    let name: String
+    var card: CreditCard?
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+    deinit { print(&quot;\(name) is deallocated&quot;) }
+}
+
+class CreditCard {
+    let number: UInt64
+    unowned let customer: Customer  // ✅ Card can't exist without customer
+    
+    init(number: UInt64, customer: Customer) {
+        self.number = number
+        self.customer = customer
+    }
+    
+    deinit { print(&quot;Card #\(number) is deallocated&quot;) }
+}
+
+var john: Customer? = Customer(name: &quot;John&quot;)
+john?.card = CreditCard(number: 1234_5678_9012_3456, customer: john!)
+john = nil  // Both deallocated
+</code></pre>
+<h2 id="-common-pitfalls-3"><a class="header" href="#-common-pitfalls-3">⚠️ Common Pitfalls</a></h2>
+<h3 id="pitfall-1-using-unowned-when-object-might-be-deallocated"><a class="header" href="#pitfall-1-using-unowned-when-object-might-be-deallocated">Pitfall 1: Using Unowned When Object Might Be Deallocated</a></h3>
+<pre><code class="language-swift">class ViewController {
+    unowned let delegate: MyDelegate  // ❌ Crashes if delegate deallocated first
+}
+
+// Fix: Use weak
+class ViewController {
+    weak var delegate: MyDelegate?  // ✅ Safe
+}
+</code></pre>
+<h3 id="pitfall-2-strong-delegate-references"><a class="header" href="#pitfall-2-strong-delegate-references">Pitfall 2: Strong Delegate References</a></h3>
+<pre><code class="language-swift">protocol DataSourceDelegate: AnyObject {
+    func didUpdate()
+}
+
+class DataSource {
+    var delegate: DataSourceDelegate?  // ❌ Should be weak!
+}
+
+// Fix:
+class DataSource {
+    weak var delegate: DataSourceDelegate?  // ✅ Correct
+}
+</code></pre>
+<h3 id="pitfall-3-closures-capturing-self"><a class="header" href="#pitfall-3-closures-capturing-self">Pitfall 3: Closures Capturing Self</a></h3>
+<pre><code class="language-swift">class ViewController {
+    var name = &quot;VC&quot;
+    
+    func setup() {
+        someAsyncCall {
+            print(self.name)  // ❌ Strong capture
+        }
+    }
+}
+
+// Fix:
+func setup() {
+    someAsyncCall { [weak self] in
+        print(self?.name ?? &quot;&quot;)  // ✅ Weak capture
     }
 }
 </code></pre>
-<h2 id="-common-pitfalls-3"><a class="header" href="#-common-pitfalls-3">⚠️ Common Pitfalls</a></h2>
-<p><strong>Pitfall</strong>: Using unowned when object might be deallocated</p>
-<pre><code class="language-swift">class ViewController {
-    unowned let delegate: Delegate  // ❌ Crashes if delegate deallocated
-}
-</code></pre>
 <h2 id="-interview-tips-2"><a class="header" href="#-interview-tips-2">🎤 Interview Tips</a></h2>
-<p>&quot;Strong references increase the reference count and keep objects alive. Weak references don't increase the count and automatically become nil when the object is deallocated - use for optional relationships. Unowned is like weak but non-optional - use when you're certain the object will outlive the reference.&quot;</p>
+<p><strong>Question</strong>: &quot;What's the difference between weak and unowned?&quot;</p>
+<p><strong>Answer</strong>: </p>
+<blockquote>
+<p>&quot;Both weak and unowned don't increase the reference count, preventing retain cycles. The key difference is that weak is optional and automatically becomes nil when the object is deallocated, while unowned is non-optional and will crash if you try to access it after deallocation.</p>
+<p>I use weak for delegates and optional relationships where the object might not exist. I use unowned when I'm certain the object will outlive the reference, like a child object referencing its parent that owns it.&quot;</p>
+</blockquote>
 <h2 id="-practice-challenge-2"><a class="header" href="#-practice-challenge-2">🏋️ Practice Challenge</a></h2>
-<p>Create Parent/Child classes where child has weak reference to parent.</p>
+<p>Create a <code>Node</code> class for a linked list where each node has a <code>next</code> (strong) and <code>previous</code> (weak) reference. Demonstrate that nodes are properly deallocated.</p>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">class Node {
+    let value: Int
+    var next: Node?
+    weak var previous: Node?
+    
+    init(value: Int) {
+        self.value = value
+        print(&quot;Node \(value) created&quot;)
+    }
+    
+    deinit {
+        print(&quot;Node \(value) deallocated&quot;)
+    }
+}
+
+// Test
+var head: Node? = Node(value: 1)
+var second: Node? = Node(value: 2)
+var third: Node? = Node(value: 3)
+
+head?.next = second
+second?.previous = head
+second?.next = third
+third?.previous = second
+
+// Break the chain
+head = nil
+second = nil
+third = nil
+// All nodes deallocated properly
+</code></pre>
+</details>
 <h2 id="-mastery-checklist-3"><a class="header" href="#-mastery-checklist-3">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Know when to use each type</li>
+Know when to use strong, weak, unowned</li>
 <li><input disabled="" type="checkbox"/>
 Understand reference counting impact</li>
 <li><input disabled="" type="checkbox"/>
 Can prevent retain cycles</li>
+<li><input disabled="" type="checkbox"/>
+Know weak is optional, unowned is not</li>
+<li><input disabled="" type="checkbox"/>
+Can identify when to use each in code</li>
 </ul>
 <hr />
 <p><strong>Next</strong>: <a href="swift/./05-retain-cycles.html">Q5: Retain Cycles →</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="q5-retain-cycles"><a class="header" href="#q5-retain-cycles">Q5: Retain Cycles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q5-what-causes-retain-cycles"><a class="header" href="#q5-what-causes-retain-cycles">Q5: What Causes Retain Cycles</a></h1>
 <h2 id="-the-answer-3"><a class="header" href="#-the-answer-3">🎯 The Answer</a></h2>
-<p>Two objects holding strong references to each other, preventing deallocation</p>
+<p>A retain cycle occurs when two or more objects hold strong references to each other, preventing ARC from deallocating them. Common causes: parent-child relationships, closures capturing self, delegates with strong references.</p>
 <h2 id="-deep-dive-3"><a class="header" href="#-deep-dive-3">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// RETAIN CYCLE EXAMPLE
+class Parent {
+    var child: Child?
+    deinit { print(&quot;Parent deallocated&quot;) }
+}
+
+class Child {
+    var parent: Parent?  // ❌ Strong reference creates cycle
+    deinit { print(&quot;Child deallocated&quot;) }
+}
+
+var parent: Parent? = Parent()
+var child: Child? = Child()
+parent?.child = child
+child?.parent = parent
+
+parent = nil
+child = nil
+// ❌ Nothing prints - memory leak!
+
+// FIX: Use weak
+class Child {
+    weak var parent: Parent?  // ✅ Breaks the cycle
+}
+</code></pre>
+<h3 id="common-scenarios"><a class="header" href="#common-scenarios">Common Scenarios</a></h3>
+<p><strong>1. Closure Retain Cycles</strong></p>
+<pre><code class="language-swift">class ViewController {
+    var completion: (() -&gt; Void)?
+    
+    func setup() {
+        completion = {
+            self.view.backgroundColor = .red  // ❌ Captures self strongly
+        }
+    }
+}
+
+// Fix:
+completion = { [weak self] in
+    self?.view.backgroundColor = .red  // ✅
+}
+</code></pre>
+<p><strong>2. Delegate Retain Cycles</strong></p>
+<pre><code class="language-swift">protocol Delegate: AnyObject {}
+
+class Manager {
+    var delegate: Delegate?  // ❌ Should be weak
+}
+
+// Fix:
+weak var delegate: Delegate?  // ✅
+</code></pre>
+<p><strong>3. Timer Retain Cycles</strong></p>
+<pre><code class="language-swift">class ViewController {
+    var timer: Timer?
+    
+    func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.update()  // ❌ Timer retains self
+        }
+    }
+}
+
+// Fix:
+timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+    self?.update()  // ✅
+}
 </code></pre>
 <h2 id="-common-pitfalls-4"><a class="header" href="#-common-pitfalls-4">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
-<h2 id="-interview-tips-3"><a class="header" href="#-interview-tips-3">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-3"><a class="header" href="#-practice-challenge-3">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
+<p><strong>Pitfall</strong>: Forgetting to invalidate timers</p>
+<pre><code class="language-swift">deinit {
+    timer?.invalidate()  // ✅ Must invalidate
+}
 </code></pre>
-</details>
+<h2 id="-interview-tips-3"><a class="header" href="#-interview-tips-3">🎤 Interview Tips</a></h2>
+<p>&quot;Retain cycles happen when objects hold strong references to each other. The most common cases are closures capturing self, delegates, and parent-child relationships. I prevent them by using weak or unowned references, and always use [weak self] in closures that might outlive the object.&quot;</p>
 <h2 id="-mastery-checklist-4"><a class="header" href="#-mastery-checklist-4">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Can identify retain cycles</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know how to break cycles</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Understand closure capture</li>
+<li><input disabled="" type="checkbox"/>
+Know delegate best practices</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./06-property-wrappers.html">Q6: Property Wrappers →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q6-property-wrappers"><a class="header" href="#q6-property-wrappers">Q6: Property Wrappers</a></h1>
 <h2 id="-the-answer-4"><a class="header" href="#-the-answer-4">🎯 The Answer</a></h2>
-<p>Reusable code that adds behavior to properties using @propertyWrapper</p>
+<p>Property wrappers add reusable behavior to properties using <code>@propertyWrapper</code>. They wrap a value and add logic for getting/setting. Examples: <code>@State</code>, <code>@Published</code>, <code>@UserDefault</code>.</p>
 <h2 id="-deep-dive-4"><a class="header" href="#-deep-dive-4">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">@propertyWrapper
+struct Capitalized {
+    private var value: String = &quot;&quot;
+    
+    var wrappedValue: String {
+        get { value }
+        set { value = newValue.capitalized }
+    }
+    
+    init(wrappedValue: String) {
+        self.value = wrappedValue.capitalized
+    }
+}
+
+// Usage
+struct User {
+    @Capitalized var name: String
+}
+
+var user = User(name: &quot;john&quot;)
+print(user.name)  // &quot;John&quot;
+user.name = &quot;jane&quot;
+print(user.name)  // &quot;Jane&quot;
 </code></pre>
-<h2 id="-common-pitfalls-5"><a class="header" href="#-common-pitfalls-5">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
+<h3 id="built-in-property-wrappers"><a class="header" href="#built-in-property-wrappers">Built-in Property Wrappers</a></h3>
+<p><strong>SwiftUI:</strong></p>
+<ul>
+<li><code>@State</code>: Local view state</li>
+<li><code>@Binding</code>: Two-way binding</li>
+<li><code>@StateObject</code>: Observable object owner</li>
+<li><code>@ObservedObject</code>: Observable object observer</li>
+<li><code>@EnvironmentObject</code>: Shared environment object</li>
+<li><code>@Environment</code>: System environment values</li>
+</ul>
+<p><strong>Combine:</strong></p>
+<ul>
+<li><code>@Published</code>: Publishes value changes</li>
+</ul>
+<h3 id="custom-examples"><a class="header" href="#custom-examples">Custom Examples</a></h3>
+<p><strong>@UserDefault</strong></p>
+<pre><code class="language-swift">@propertyWrapper
+struct UserDefault&lt;T&gt; {
+    let key: String
+    let defaultValue: T
+    
+    var wrappedValue: T {
+        get {
+            UserDefaults.standard.object(forKey: key) as? T ?? defaultValue
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: key)
+        }
+    }
+}
+
+// Usage
+struct Settings {
+    @UserDefault(key: &quot;username&quot;, defaultValue: &quot;Guest&quot;)
+    var username: String
+}
+</code></pre>
+<p><strong>@Clamped</strong></p>
+<pre><code class="language-swift">@propertyWrapper
+struct Clamped&lt;Value: Comparable&gt; {
+    private var value: Value
+    private let range: ClosedRange&lt;Value&gt;
+    
+    var wrappedValue: Value {
+        get { value }
+        set { value = min(max(range.lowerBound, newValue), range.upperBound) }
+    }
+    
+    init(wrappedValue: Value, _ range: ClosedRange&lt;Value&gt;) {
+        self.range = range
+        self.value = min(max(range.lowerBound, wrappedValue), range.upperBound)
+    }
+}
+
+struct Game {
+    @Clamped(0...100) var health = 100
+}
+</code></pre>
 <h2 id="-interview-tips-4"><a class="header" href="#-interview-tips-4">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-4"><a class="header" href="#-practice-challenge-4">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Property wrappers let me extract common property logic into reusable components. For example, @State in SwiftUI automatically triggers view updates when the value changes. I can create custom wrappers for things like UserDefaults, validation, or clamping values to ranges.&quot;</p>
 <h2 id="-mastery-checklist-5"><a class="header" href="#-mastery-checklist-5">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Can create property wrappers</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know SwiftUI property wrappers</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Understand wrappedValue</li>
+<li><input disabled="" type="checkbox"/>
+Can use projectedValue</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./07-codable.html">Q7: Codable →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q7-codable"><a class="header" href="#q7-codable">Q7: Codable</a></h1>
 <h2 id="-the-answer-5"><a class="header" href="#-the-answer-5">🎯 The Answer</a></h2>
 <p>Protocol for encoding/decoding, combines Encodable + Decodable</p>
 <h2 id="-deep-dive-5"><a class="header" href="#-deep-dive-5">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-6"><a class="header" href="#-common-pitfalls-6">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-5"><a class="header" href="#-common-pitfalls-5">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-5"><a class="header" href="#-interview-tips-5">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-5"><a class="header" href="#-practice-challenge-5">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-3"><a class="header" href="#-practice-challenge-3">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1350,11 +1630,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-6"><a class="header" href="#-deep-dive-6">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-7"><a class="header" href="#-common-pitfalls-7">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-6"><a class="header" href="#-common-pitfalls-6">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-6"><a class="header" href="#-interview-tips-6">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-6"><a class="header" href="#-practice-challenge-6">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-4"><a class="header" href="#-practice-challenge-4">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1378,11 +1658,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-7"><a class="header" href="#-deep-dive-7">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-8"><a class="header" href="#-common-pitfalls-8">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-7"><a class="header" href="#-common-pitfalls-7">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-7"><a class="header" href="#-interview-tips-7">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-7"><a class="header" href="#-practice-challenge-7">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-5"><a class="header" href="#-practice-challenge-5">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1406,11 +1686,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-8"><a class="header" href="#-deep-dive-8">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-9"><a class="header" href="#-common-pitfalls-9">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-8"><a class="header" href="#-common-pitfalls-8">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-8"><a class="header" href="#-interview-tips-8">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-8"><a class="header" href="#-practice-challenge-8">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-6"><a class="header" href="#-practice-challenge-6">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1434,11 +1714,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-9"><a class="header" href="#-deep-dive-9">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-10"><a class="header" href="#-common-pitfalls-10">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-9"><a class="header" href="#-common-pitfalls-9">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-9"><a class="header" href="#-interview-tips-9">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-9"><a class="header" href="#-practice-challenge-9">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-7"><a class="header" href="#-practice-challenge-7">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1462,11 +1742,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-10"><a class="header" href="#-deep-dive-10">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-11"><a class="header" href="#-common-pitfalls-11">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-10"><a class="header" href="#-common-pitfalls-10">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-10"><a class="header" href="#-interview-tips-10">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-10"><a class="header" href="#-practice-challenge-10">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-8"><a class="header" href="#-practice-challenge-8">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1490,11 +1770,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-11"><a class="header" href="#-deep-dive-11">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-12"><a class="header" href="#-common-pitfalls-12">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-11"><a class="header" href="#-common-pitfalls-11">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-11"><a class="header" href="#-interview-tips-11">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-11"><a class="header" href="#-practice-challenge-11">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-9"><a class="header" href="#-practice-challenge-9">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1518,11 +1798,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-12"><a class="header" href="#-deep-dive-12">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-13"><a class="header" href="#-common-pitfalls-13">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-12"><a class="header" href="#-common-pitfalls-12">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-12"><a class="header" href="#-interview-tips-12">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-12"><a class="header" href="#-practice-challenge-12">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-10"><a class="header" href="#-practice-challenge-10">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1546,11 +1826,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-13"><a class="header" href="#-deep-dive-13">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-14"><a class="header" href="#-common-pitfalls-14">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-13"><a class="header" href="#-common-pitfalls-13">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-13"><a class="header" href="#-interview-tips-13">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-13"><a class="header" href="#-practice-challenge-13">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-11"><a class="header" href="#-practice-challenge-11">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1574,11 +1854,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-14"><a class="header" href="#-deep-dive-14">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-15"><a class="header" href="#-common-pitfalls-15">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-14"><a class="header" href="#-common-pitfalls-14">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-14"><a class="header" href="#-interview-tips-14">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-14"><a class="header" href="#-practice-challenge-14">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-12"><a class="header" href="#-practice-challenge-12">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1602,11 +1882,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-15"><a class="header" href="#-deep-dive-15">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-16"><a class="header" href="#-common-pitfalls-16">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-15"><a class="header" href="#-common-pitfalls-15">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-15"><a class="header" href="#-interview-tips-15">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-15"><a class="header" href="#-practice-challenge-15">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-13"><a class="header" href="#-practice-challenge-13">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1630,11 +1910,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-16"><a class="header" href="#-deep-dive-16">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-17"><a class="header" href="#-common-pitfalls-17">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-16"><a class="header" href="#-common-pitfalls-16">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-16"><a class="header" href="#-interview-tips-16">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-16"><a class="header" href="#-practice-challenge-16">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-14"><a class="header" href="#-practice-challenge-14">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1658,11 +1938,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-17"><a class="header" href="#-deep-dive-17">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-18"><a class="header" href="#-common-pitfalls-18">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-17"><a class="header" href="#-common-pitfalls-17">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-17"><a class="header" href="#-interview-tips-17">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-17"><a class="header" href="#-practice-challenge-17">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-15"><a class="header" href="#-practice-challenge-15">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>
@@ -1686,11 +1966,11 @@ Can explain to others</li>
 <h2 id="-deep-dive-18"><a class="header" href="#-deep-dive-18">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">// Example code demonstrating the concept
 </code></pre>
-<h2 id="-common-pitfalls-19"><a class="header" href="#-common-pitfalls-19">⚠️ Common Pitfalls</a></h2>
+<h2 id="-common-pitfalls-18"><a class="header" href="#-common-pitfalls-18">⚠️ Common Pitfalls</a></h2>
 <p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-18"><a class="header" href="#-interview-tips-18">🎤 Interview Tips</a></h2>
 <p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-18"><a class="header" href="#-practice-challenge-18">🏋️ Practice Challenge</a></h2>
+<h2 id="-practice-challenge-16"><a class="header" href="#-practice-challenge-16">🏋️ Practice Challenge</a></h2>
 <p>Hands-on coding challenge to prove mastery.</p>
 <details>
 <summary>Solution</summary>

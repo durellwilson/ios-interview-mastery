@@ -181,40 +181,182 @@
                     <main>
                         <h1 id="q4-strong-weak-unowned"><a class="header" href="#q4-strong-weak-unowned">Q4: Strong, Weak, Unowned</a></h1>
 <h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
-<p><strong>Strong</strong> (default): Increases reference count, keeps object alive
-<strong>Weak</strong>: Doesn't increase count, becomes nil when deallocated (optional)
-<strong>Unowned</strong>: Doesn't increase count, crashes if accessed after deallocation (non-optional)</p>
+<ul>
+<li><strong>Strong</strong> (default): Increases reference count, keeps object alive</li>
+<li><strong>Weak</strong>: Optional, doesn't increase count, becomes <code>nil</code> when object deallocated</li>
+<li><strong>Unowned</strong>: Non-optional, doesn't increase count, crashes if accessed after deallocation</li>
+</ul>
 <h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
 <pre><code class="language-swift">class Person {
     let name: String
-    weak var friend: Person?        // weak
-    unowned let parent: Person      // unowned
-    var pet: Pet?                   // strong (default)
+    var apartment: Apartment?
     
-    init(name: String, parent: Person) {
+    init(name: String) {
         self.name = name
-        self.parent = parent
+        print(&quot;\(name) is initialized&quot;)
+    }
+    
+    deinit {
+        print(&quot;\(name) is deallocated&quot;)
+    }
+}
+
+class Apartment {
+    let unit: String
+    weak var tenant: Person?  // ✅ weak prevents retain cycle
+    
+    init(unit: String) {
+        self.unit = unit
+    }
+    
+    deinit {
+        print(&quot;Apartment \(unit) is deallocated&quot;)
+    }
+}
+
+// Usage
+var john: Person? = Person(name: &quot;John&quot;)
+var unit4A: Apartment? = Apartment(unit: &quot;4A&quot;)
+
+john?.apartment = unit4A
+unit4A?.tenant = john
+
+john = nil  // Both deallocated because weak broke the cycle
+unit4A = nil
+</code></pre>
+<h3 id="when-to-use-each"><a class="header" href="#when-to-use-each">When to Use Each</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Type</th><th>Use When</th><th>Example</th></tr></thead><tbody>
+<tr><td><strong>Strong</strong></td><td>Default ownership</td><td>Properties, variables</td></tr>
+<tr><td><strong>Weak</strong></td><td>Optional relationship, might be nil</td><td>Delegates, parent references</td></tr>
+<tr><td><strong>Unowned</strong></td><td>Non-optional, guaranteed to exist</td><td>Child to parent (parent owns child)</td></tr>
+</tbody></table>
+</div>
+<h3 id="unowned-example"><a class="header" href="#unowned-example">Unowned Example</a></h3>
+<pre><code class="language-swift">class Customer {
+    let name: String
+    var card: CreditCard?
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+    deinit { print(&quot;\(name) is deallocated&quot;) }
+}
+
+class CreditCard {
+    let number: UInt64
+    unowned let customer: Customer  // ✅ Card can't exist without customer
+    
+    init(number: UInt64, customer: Customer) {
+        self.number = number
+        self.customer = customer
+    }
+    
+    deinit { print(&quot;Card #\(number) is deallocated&quot;) }
+}
+
+var john: Customer? = Customer(name: &quot;John&quot;)
+john?.card = CreditCard(number: 1234_5678_9012_3456, customer: john!)
+john = nil  // Both deallocated
+</code></pre>
+<h2 id="-common-pitfalls"><a class="header" href="#-common-pitfalls">⚠️ Common Pitfalls</a></h2>
+<h3 id="pitfall-1-using-unowned-when-object-might-be-deallocated"><a class="header" href="#pitfall-1-using-unowned-when-object-might-be-deallocated">Pitfall 1: Using Unowned When Object Might Be Deallocated</a></h3>
+<pre><code class="language-swift">class ViewController {
+    unowned let delegate: MyDelegate  // ❌ Crashes if delegate deallocated first
+}
+
+// Fix: Use weak
+class ViewController {
+    weak var delegate: MyDelegate?  // ✅ Safe
+}
+</code></pre>
+<h3 id="pitfall-2-strong-delegate-references"><a class="header" href="#pitfall-2-strong-delegate-references">Pitfall 2: Strong Delegate References</a></h3>
+<pre><code class="language-swift">protocol DataSourceDelegate: AnyObject {
+    func didUpdate()
+}
+
+class DataSource {
+    var delegate: DataSourceDelegate?  // ❌ Should be weak!
+}
+
+// Fix:
+class DataSource {
+    weak var delegate: DataSourceDelegate?  // ✅ Correct
+}
+</code></pre>
+<h3 id="pitfall-3-closures-capturing-self"><a class="header" href="#pitfall-3-closures-capturing-self">Pitfall 3: Closures Capturing Self</a></h3>
+<pre><code class="language-swift">class ViewController {
+    var name = &quot;VC&quot;
+    
+    func setup() {
+        someAsyncCall {
+            print(self.name)  // ❌ Strong capture
+        }
+    }
+}
+
+// Fix:
+func setup() {
+    someAsyncCall { [weak self] in
+        print(self?.name ?? &quot;&quot;)  // ✅ Weak capture
     }
 }
 </code></pre>
-<h2 id="-common-pitfalls"><a class="header" href="#-common-pitfalls">⚠️ Common Pitfalls</a></h2>
-<p><strong>Pitfall</strong>: Using unowned when object might be deallocated</p>
-<pre><code class="language-swift">class ViewController {
-    unowned let delegate: Delegate  // ❌ Crashes if delegate deallocated
-}
-</code></pre>
 <h2 id="-interview-tips"><a class="header" href="#-interview-tips">🎤 Interview Tips</a></h2>
-<p>&quot;Strong references increase the reference count and keep objects alive. Weak references don't increase the count and automatically become nil when the object is deallocated - use for optional relationships. Unowned is like weak but non-optional - use when you're certain the object will outlive the reference.&quot;</p>
+<p><strong>Question</strong>: &quot;What's the difference between weak and unowned?&quot;</p>
+<p><strong>Answer</strong>: </p>
+<blockquote>
+<p>&quot;Both weak and unowned don't increase the reference count, preventing retain cycles. The key difference is that weak is optional and automatically becomes nil when the object is deallocated, while unowned is non-optional and will crash if you try to access it after deallocation.</p>
+<p>I use weak for delegates and optional relationships where the object might not exist. I use unowned when I'm certain the object will outlive the reference, like a child object referencing its parent that owns it.&quot;</p>
+</blockquote>
 <h2 id="-practice-challenge"><a class="header" href="#-practice-challenge">🏋️ Practice Challenge</a></h2>
-<p>Create Parent/Child classes where child has weak reference to parent.</p>
+<p>Create a <code>Node</code> class for a linked list where each node has a <code>next</code> (strong) and <code>previous</code> (weak) reference. Demonstrate that nodes are properly deallocated.</p>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">class Node {
+    let value: Int
+    var next: Node?
+    weak var previous: Node?
+    
+    init(value: Int) {
+        self.value = value
+        print(&quot;Node \(value) created&quot;)
+    }
+    
+    deinit {
+        print(&quot;Node \(value) deallocated&quot;)
+    }
+}
+
+// Test
+var head: Node? = Node(value: 1)
+var second: Node? = Node(value: 2)
+var third: Node? = Node(value: 3)
+
+head?.next = second
+second?.previous = head
+second?.next = third
+third?.previous = second
+
+// Break the chain
+head = nil
+second = nil
+third = nil
+// All nodes deallocated properly
+</code></pre>
+</details>
 <h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Know when to use each type</li>
+Know when to use strong, weak, unowned</li>
 <li><input disabled="" type="checkbox"/>
 Understand reference counting impact</li>
 <li><input disabled="" type="checkbox"/>
 Can prevent retain cycles</li>
+<li><input disabled="" type="checkbox"/>
+Know weak is optional, unowned is not</li>
+<li><input disabled="" type="checkbox"/>
+Can identify when to use each in code</li>
 </ul>
 <hr />
 <p><strong>Next</strong>: <a href="./05-retain-cycles.html">Q5: Retain Cycles →</a></p>
