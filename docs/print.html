@@ -1,0 +1,882 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>iOS Interview Mastery: 100 Questions to Win</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Master iOS interviews with 100 essential questions, quizzes, and hands-on coding challenges">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">iOS Interview Mastery: 100 Questions to Win</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/durellwilson/ios-interview-mastery" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="ios-interview-mastery-100-questions-to-win"><a class="header" href="#ios-interview-mastery-100-questions-to-win">iOS Interview Mastery: 100 Questions to Win</a></h1>
+<blockquote>
+<p>If you can answer these 100 questions, you don't walk into interviews with confidence… <strong>you walk in prepared to win.</strong></p>
+</blockquote>
+<h2 id="-what-youll-master"><a class="header" href="#-what-youll-master">🎯 What You'll Master</a></h2>
+<p>This course covers <strong>70 essential iOS interview questions</strong> across 5 critical domains:</p>
+<ul>
+<li><strong>Swift &amp; Language (Q1-20)</strong>: Core language concepts, protocols, generics, closures</li>
+<li><strong>Concurrency (Q21-30)</strong>: GCD, async-await, actors, race conditions</li>
+<li><strong>Memory Management (Q31-40)</strong>: ARC, retain cycles, memory leaks</li>
+<li><strong>UIKit &amp; SwiftUI (Q41-60)</strong>: Lifecycles, layouts, state management</li>
+<li><strong>Networking (Q61-70)</strong>: URLSession, JSON, caching, error handling</li>
+</ul>
+<h2 id="-learning-approach"><a class="header" href="#-learning-approach">🚀 Learning Approach</a></h2>
+<p>Each question includes:</p>
+<p>✅ <strong>Clear Explanation</strong> - Understand the concept deeply<br />
+✅ <strong>Code Examples</strong> - See it in action<br />
+✅ <strong>Common Pitfalls</strong> - Avoid interview mistakes<br />
+✅ <strong>Interview Tips</strong> - How to answer confidently<br />
+✅ <strong>Practice Challenge</strong> - Prove your mastery</p>
+<h2 id="-quizzes--challenges"><a class="header" href="#-quizzes--challenges">📊 Quizzes &amp; Challenges</a></h2>
+<p>Test your knowledge with:</p>
+<ul>
+<li>Section quizzes after each domain</li>
+<li>Hands-on coding challenges</li>
+<li>Real interview scenarios</li>
+<li>Final mastery assessment</li>
+</ul>
+<h2 id="-who-this-is-for"><a class="header" href="#-who-this-is-for">🎓 Who This Is For</a></h2>
+<ul>
+<li>iOS developers preparing for interviews</li>
+<li>Engineers wanting to level up their Swift knowledge</li>
+<li>Anyone seeking mastery of iOS fundamentals</li>
+<li>Developers transitioning to iOS</li>
+</ul>
+<h2 id="-how-to-use-this-course"><a class="header" href="#-how-to-use-this-course">💪 How to Use This Course</a></h2>
+<ol>
+<li><strong>Read each question thoroughly</strong></li>
+<li><strong>Try to answer before reading the solution</strong></li>
+<li><strong>Study the code examples</strong></li>
+<li><strong>Complete the practice challenges</strong></li>
+<li><strong>Take the quizzes to test retention</strong></li>
+<li><strong>Repeat sections until you achieve mastery</strong></li>
+</ol>
+<h2 id="-success-metrics"><a class="header" href="#-success-metrics">🏆 Success Metrics</a></h2>
+<p>You'll know you've mastered this when you can:</p>
+<ul>
+<li>Explain each concept to a junior developer</li>
+<li>Write code examples from memory</li>
+<li>Identify issues in code snippets instantly</li>
+<li>Answer follow-up questions with confidence</li>
+</ul>
+<hr />
+<p><strong>Ready to dominate your next iOS interview?</strong></p>
+<p>Let's begin with Swift &amp; Language fundamentals →</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q1-whats-the-difference-between-struct-and-class"><a class="header" href="#q1-whats-the-difference-between-struct-and-class">Q1: What's the difference between struct and class?</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p><strong>Structs</strong> are <strong>value types</strong> - they're copied when assigned or passed.<br />
+<strong>Classes</strong> are <strong>reference types</strong> - they're shared via references.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<h3 id="key-differences"><a class="header" href="#key-differences">Key Differences</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Struct</th><th>Class</th></tr></thead><tbody>
+<tr><td>Type</td><td>Value type</td><td>Reference type</td></tr>
+<tr><td>Inheritance</td><td>❌ No</td><td>✅ Yes</td></tr>
+<tr><td>Deinitializers</td><td>❌ No</td><td>✅ Yes</td></tr>
+<tr><td>Reference counting</td><td>❌ No</td><td>✅ Yes (ARC)</td></tr>
+<tr><td>Mutability</td><td>Explicit <code>mutating</code></td><td>Implicit</td></tr>
+<tr><td>Thread safety</td><td>Safer (copied)</td><td>Requires care</td></tr>
+</tbody></table>
+</div>
+<h3 id="code-example"><a class="header" href="#code-example">Code Example</a></h3>
+<pre><code class="language-swift">// STRUCT - Value Type
+struct Point {
+    var x: Int
+    var y: Int
+}
+
+var point1 = Point(x: 10, y: 20)
+var point2 = point1  // COPY created
+point2.x = 30
+
+print(point1.x)  // 10 (unchanged)
+print(point2.x)  // 30 (changed)
+
+// CLASS - Reference Type
+class Person {
+    var name: String
+    init(name: String) { self.name = name }
+}
+
+var person1 = Person(name: "Alice")
+var person2 = person1  // REFERENCE shared
+person2.name = "Bob"
+
+print(person1.name)  // "Bob" (changed!)
+print(person2.name)  // "Bob" (same reference)
+</code></pre>
+<h2 id="-common-pitfalls"><a class="header" href="#-common-pitfalls">⚠️ Common Pitfalls</a></h2>
+<h3 id="pitfall-1-unexpected-mutations"><a class="header" href="#pitfall-1-unexpected-mutations">Pitfall 1: Unexpected Mutations</a></h3>
+<pre><code class="language-swift">class Counter {
+    var count = 0
+}
+
+let counter = Counter()
+counter.count = 10  // ✅ Works! 'let' only makes reference constant
+</code></pre>
+<h3 id="pitfall-2-struct-mutation"><a class="header" href="#pitfall-2-struct-mutation">Pitfall 2: Struct Mutation</a></h3>
+<pre><code class="language-swift">struct Counter {
+    var count = 0
+    
+    mutating func increment() {  // Must be 'mutating'
+        count += 1
+    }
+}
+
+let counter = Counter()
+// counter.increment()  // ❌ Error: 'let' prevents mutation
+</code></pre>
+<h2 id="-when-to-use-each"><a class="header" href="#-when-to-use-each">💡 When to Use Each</a></h2>
+<h3 id="use-struct-when"><a class="header" href="#use-struct-when">Use Struct When:</a></h3>
+<ul>
+<li>Modeling simple data (Point, Size, Color)</li>
+<li>You want value semantics</li>
+<li>Thread safety is important</li>
+<li>No inheritance needed</li>
+</ul>
+<h3 id="use-class-when"><a class="header" href="#use-class-when">Use Class When:</a></h3>
+<ul>
+<li>Need inheritance</li>
+<li>Need deinitializers</li>
+<li>Modeling identity (User, Session)</li>
+<li>Working with Objective-C APIs</li>
+</ul>
+<h2 id="-interview-tips"><a class="header" href="#-interview-tips">🎤 Interview Tips</a></h2>
+<p><strong>Interviewer</strong>: "Why does Swift prefer structs?"</p>
+<p><strong>You</strong>: "Swift prefers structs because they're safer by default - no retain cycles, better thread safety, and clearer ownership. The compiler can optimize them better too. But classes are essential when you need inheritance or reference semantics."</p>
+<p><strong>Follow-up</strong>: "Can structs have methods?"</p>
+<p><strong>You</strong>: "Yes! Structs can have methods, computed properties, initializers, and even conform to protocols. They just can't inherit from other structs."</p>
+<h2 id="-practice-challenge"><a class="header" href="#-practice-challenge">🏋️ Practice Challenge</a></h2>
+<p>Create a <code>BankAccount</code> struct and a <code>User</code> class. The User should have a reference to their account. Demonstrate:</p>
+<ol>
+<li>Copying a BankAccount creates a new account</li>
+<li>Multiple Users can't share the same account reference</li>
+<li>Implement a <code>transfer</code> method that's safe</li>
+</ol>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">struct BankAccount {
+    var balance: Double
+    let accountNumber: String
+    
+    mutating func deposit(_ amount: Double) {
+        balance += amount
+    }
+    
+    mutating func withdraw(_ amount: Double) -&gt; Bool {
+        guard balance &gt;= amount else { return false }
+        balance -= amount
+        return true
+    }
+}
+
+class User {
+    let name: String
+    var account: BankAccount
+    
+    init(name: String, account: BankAccount) {
+        self.name = name
+        self.account = account
+    }
+    
+    func transfer(to recipient: User, amount: Double) -&gt; Bool {
+        guard account.withdraw(amount) else { return false }
+        recipient.account.deposit(amount)
+        return true
+    }
+}
+
+// Test
+var account1 = BankAccount(balance: 1000, accountNumber: "001")
+var account2 = BankAccount(balance: 500, accountNumber: "002")
+
+let alice = User(name: "Alice", account: account1)
+let bob = User(name: "Bob", account: account2)
+
+alice.transfer(to: bob, amount: 200)
+print(alice.account.balance)  // 800
+print(bob.account.balance)    // 700
+</code></pre>
+</details>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Can explain value vs reference types</li>
+<li><input disabled="" type="checkbox"/>
+Know when to use struct vs class</li>
+<li><input disabled="" type="checkbox"/>
+Understand mutating keyword</li>
+<li><input disabled="" type="checkbox"/>
+Can identify copy vs reference behavior</li>
+<li><input disabled="" type="checkbox"/>
+Know the performance implications</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="swift/./02-value-vs-reference.html">Q2: Value vs Reference Types →</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q2-value-vs-reference-types"><a class="header" href="#q2-value-vs-reference-types">Q2: Value vs Reference Types</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q3-how-arc-works"><a class="header" href="#q3-how-arc-works">Q3: How ARC Works</a></h1>
+<h2 id="-the-answer-1"><a class="header" href="#-the-answer-1">🎯 The Answer</a></h2>
+<p><strong>ARC (Automatic Reference Counting)</strong> automatically manages memory by tracking how many strong references point to each class instance. When the count reaches zero, the instance is deallocated.</p>
+<h2 id="-deep-dive-1"><a class="header" href="#-deep-dive-1">📖 Deep Dive</a></h2>
+<h3 id="the-three-rules-of-arc"><a class="header" href="#the-three-rules-of-arc">The Three Rules of ARC</a></h3>
+<ol>
+<li><strong>Strong reference created</strong> → Reference count +1</li>
+<li><strong>Strong reference removed</strong> → Reference count -1</li>
+<li><strong>Count reaches 0</strong> → Instance deallocated</li>
+</ol>
+<h3 id="code-example-1"><a class="header" href="#code-example-1">Code Example</a></h3>
+<pre><code class="language-swift">class Person {
+    let name: String
+    
+    init(name: String) {
+        self.name = name
+        print("\(name) is initialized")
+    }
+    
+    deinit {
+        print("\(name) is deallocated")
+    }
+}
+
+// Reference count: 0
+var person1: Person? = Person(name: "Alice")  // RC: 1
+var person2 = person1                          // RC: 2
+var person3 = person1                          // RC: 3
+
+person1 = nil  // RC: 2
+person2 = nil  // RC: 1
+person3 = nil  // RC: 0 → deinit called!
+</code></pre>
+<h3 id="output"><a class="header" href="#output">Output:</a></h3>
+<pre><code>Alice is initialized
+Alice is deallocated
+</code></pre>
+<h2 id="-how-it-works-under-the-hood"><a class="header" href="#-how-it-works-under-the-hood">🔍 How It Works Under the Hood</a></h2>
+<pre><code class="language-swift">class Node {
+    var value: Int
+    var next: Node?
+    
+    init(value: Int) {
+        self.value = value
+    }
+    
+    deinit {
+        print("Node \(value) deallocated")
+    }
+}
+
+var head: Node? = Node(value: 1)  // RC: 1
+head?.next = Node(value: 2)        // RC: 1 for node 2
+head?.next?.next = Node(value: 3)  // RC: 1 for node 3
+
+head = nil  // All nodes deallocated in order
+</code></pre>
+<h2 id="-common-pitfalls-1"><a class="header" href="#-common-pitfalls-1">⚠️ Common Pitfalls</a></h2>
+<h3 id="pitfall-1-retain-cycles"><a class="header" href="#pitfall-1-retain-cycles">Pitfall 1: Retain Cycles</a></h3>
+<pre><code class="language-swift">class Parent {
+    var child: Child?
+    deinit { print("Parent deallocated") }
+}
+
+class Child {
+    var parent: Parent?  // ⚠️ Strong reference!
+    deinit { print("Child deallocated") }
+}
+
+var parent: Parent? = Parent()
+var child: Child? = Child()
+parent?.child = child
+child?.parent = parent
+
+parent = nil
+child = nil
+// ❌ Nothing deallocated! Retain cycle!
+</code></pre>
+<h3 id="pitfall-2-closures-capturing-self"><a class="header" href="#pitfall-2-closures-capturing-self">Pitfall 2: Closures Capturing Self</a></h3>
+<pre><code class="language-swift">class ViewController {
+    var name = "VC"
+    
+    func setupHandler() {
+        someAsyncCall {
+            print(self.name)  // ⚠️ Strong capture!
+        }
+    }
+    
+    deinit { print("VC deallocated") }
+}
+</code></pre>
+<h2 id="-arc-vs-garbage-collection"><a class="header" href="#-arc-vs-garbage-collection">💡 ARC vs Garbage Collection</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>ARC</th><th>Garbage Collection</th></tr></thead><tbody>
+<tr><td>Compile-time</td><td>Runtime</td></tr>
+<tr><td>Deterministic</td><td>Non-deterministic</td></tr>
+<tr><td>No pause</td><td>Can pause app</td></tr>
+<tr><td>Manual cycle breaking</td><td>Automatic</td></tr>
+<tr><td>iOS/Swift</td><td>Java/C#</td></tr>
+</tbody></table>
+</div>
+<h2 id="-interview-tips-1"><a class="header" href="#-interview-tips-1">🎤 Interview Tips</a></h2>
+<p><strong>Interviewer</strong>: "How does ARC differ from manual memory management?"</p>
+<p><strong>You</strong>: "ARC automatically inserts retain and release calls at compile time, so we don't have to manually manage memory like in C. But we still need to understand ownership to avoid retain cycles."</p>
+<p><strong>Follow-up</strong>: "When does ARC not work?"</p>
+<p><strong>You</strong>: "ARC only works with reference types (classes). Value types like structs don't need it. Also, ARC can't automatically break retain cycles - we need weak or unowned references for that."</p>
+<h2 id="-practice-challenge-1"><a class="header" href="#-practice-challenge-1">🏋️ Practice Challenge</a></h2>
+<p>Create a <code>Task</code> and <code>TaskManager</code> system where:</p>
+<ol>
+<li>TaskManager holds an array of tasks</li>
+<li>Each Task has a completion handler</li>
+<li>Prove that tasks are properly deallocated</li>
+<li>Show what happens with a retain cycle</li>
+</ol>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">class Task {
+    let id: Int
+    var onComplete: (() -&gt; Void)?
+    
+    init(id: Int) {
+        self.id = id
+        print("Task \(id) created")
+    }
+    
+    func execute() {
+        print("Task \(id) executing")
+        onComplete?()
+    }
+    
+    deinit {
+        print("Task \(id) deallocated")
+    }
+}
+
+class TaskManager {
+    var tasks: [Task] = []
+    
+    func addTask(_ task: Task) {
+        tasks.append(task)
+        
+        // ✅ Correct: weak self
+        task.onComplete = { [weak self] in
+            self?.removeTask(task)
+        }
+        
+        // ❌ Wrong: creates retain cycle
+        // task.onComplete = {
+        //     self.removeTask(task)
+        // }
+    }
+    
+    func removeTask(_ task: Task) {
+        tasks.removeAll { $0 === task }
+        print("Task removed from manager")
+    }
+    
+    deinit {
+        print("TaskManager deallocated")
+    }
+}
+
+// Test
+var manager: TaskManager? = TaskManager()
+let task = Task(id: 1)
+manager?.addTask(task)
+task.execute()
+manager = nil  // Should deallocate everything
+</code></pre>
+</details>
+<h2 id="-mastery-checklist-1"><a class="header" href="#-mastery-checklist-1">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand reference counting</li>
+<li><input disabled="" type="checkbox"/>
+Know when objects are deallocated</li>
+<li><input disabled="" type="checkbox"/>
+Can identify retain cycles</li>
+<li><input disabled="" type="checkbox"/>
+Understand ARC vs GC differences</li>
+<li><input disabled="" type="checkbox"/>
+Know ARC limitations</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="swift/./04-reference-types.html">Q4: Strong, Weak, Unowned →</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q4-strong-weak-unowned"><a class="header" href="#q4-strong-weak-unowned">Q4: Strong, Weak, Unowned</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q5-retain-cycles"><a class="header" href="#q5-retain-cycles">Q5: Retain Cycles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q6-property-wrappers"><a class="header" href="#q6-property-wrappers">Q6: Property Wrappers</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q7-codable"><a class="header" href="#q7-codable">Q7: Codable</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q8-map-flatmap-compactmap"><a class="header" href="#q8-map-flatmap-compactmap">Q8: Map, FlatMap, CompactMap</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q9-generics"><a class="header" href="#q9-generics">Q9: Generics</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q10-protocols"><a class="header" href="#q10-protocols">Q10: Protocols</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q11-protocol-vs-class-inheritance"><a class="header" href="#q11-protocol-vs-class-inheritance">Q11: Protocol vs Class Inheritance</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q12-associated-types"><a class="header" href="#q12-associated-types">Q12: Associated Types</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q13-extensions"><a class="header" href="#q13-extensions">Q13: Extensions</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q14-static-vs-class-methods"><a class="header" href="#q14-static-vs-class-methods">Q14: Static vs Class Methods</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q15-closures"><a class="header" href="#q15-closures">Q15: Closures</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q16-escaping-vs-non-escaping"><a class="header" href="#q16-escaping-vs-non-escaping">Q16: Escaping vs Non-Escaping</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q17-autoclosure"><a class="header" href="#q17-autoclosure">Q17: Autoclosure</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q18-inout"><a class="header" href="#q18-inout">Q18: Inout</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q19-optional-chaining"><a class="header" href="#q19-optional-chaining">Q19: Optional Chaining</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q20-computed-vs-stored-properties"><a class="header" href="#q20-computed-vs-stored-properties">Q20: Computed vs Stored Properties</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q21-gcd"><a class="header" href="#q21-gcd">Q21: GCD</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q22-sync-vs-async"><a class="header" href="#q22-sync-vs-async">Q22: Sync vs Async</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q23-serial-vs-concurrent-queues"><a class="header" href="#q23-serial-vs-concurrent-queues">Q23: Serial vs Concurrent Queues</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q24-race-conditions"><a class="header" href="#q24-race-conditions">Q24: Race Conditions</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q25-deadlocks"><a class="header" href="#q25-deadlocks">Q25: Deadlocks</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q26-dispatchgroup"><a class="header" href="#q26-dispatchgroup">Q26: DispatchGroup</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q27-operationqueue"><a class="header" href="#q27-operationqueue">Q27: OperationQueue</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q28-async-await"><a class="header" href="#q28-async-await">Q28: Async-Await</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q29-actors"><a class="header" href="#q29-actors">Q29: Actors</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q30-mainactor"><a class="header" href="#q30-mainactor">Q30: MainActor</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q31-arc-memory-allocation"><a class="header" href="#q31-arc-memory-allocation">Q31: ARC Memory Allocation</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q32-weak-references"><a class="header" href="#q32-weak-references">Q32: Weak References</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q33-unowned-references"><a class="header" href="#q33-unowned-references">Q33: Unowned References</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q34-closure-retain-cycles"><a class="header" href="#q34-closure-retain-cycles">Q34: Closure Retain Cycles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q35-capture-lists"><a class="header" href="#q35-capture-lists">Q35: Capture Lists</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q36-memory-leaks"><a class="header" href="#q36-memory-leaks">Q36: Memory Leaks</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q37-instruments"><a class="header" href="#q37-instruments">Q37: Instruments</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q38-mvvm-retain-cycles"><a class="header" href="#q38-mvvm-retain-cycles">Q38: MVVM Retain Cycles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q39-memory-warnings"><a class="header" href="#q39-memory-warnings">Q39: Memory Warnings</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q40-reference-counting"><a class="header" href="#q40-reference-counting">Q40: Reference Counting</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q41-uiviewcontroller-lifecycle"><a class="header" href="#q41-uiviewcontroller-lifecycle">Q41: UIViewController Lifecycle</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q42-app-lifecycle"><a class="header" href="#q42-app-lifecycle">Q42: App Lifecycle</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q43-frame-vs-bounds"><a class="header" href="#q43-frame-vs-bounds">Q43: Frame vs Bounds</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q44-auto-layout"><a class="header" href="#q44-auto-layout">Q44: Auto Layout</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q45-constraints-vs-frames"><a class="header" href="#q45-constraints-vs-frames">Q45: Constraints vs Frames</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q46-cell-reuse"><a class="header" href="#q46-cell-reuse">Q46: Cell Reuse</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q47-diffable-data-source"><a class="header" href="#q47-diffable-data-source">Q47: Diffable Data Source</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q48-compositional-layout"><a class="header" href="#q48-compositional-layout">Q48: Compositional Layout</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q49-swiftui-lifecycle"><a class="header" href="#q49-swiftui-lifecycle">Q49: SwiftUI Lifecycle</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q50-state-vs-binding"><a class="header" href="#q50-state-vs-binding">Q50: @State vs @Binding</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q51-observedobject-vs-stateobject"><a class="header" href="#q51-observedobject-vs-stateobject">Q51: @ObservedObject vs @StateObject</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q52-environment-values"><a class="header" href="#q52-environment-values">Q52: Environment Values</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q53-navigationstack"><a class="header" href="#q53-navigationstack">Q53: NavigationStack</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q54-swiftui-diff-engine"><a class="header" href="#q54-swiftui-diff-engine">Q54: SwiftUI Diff Engine</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q55-view-identity"><a class="header" href="#q55-view-identity">Q55: View Identity</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q56-lazy-stacks"><a class="header" href="#q56-lazy-stacks">Q56: Lazy Stacks</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q57-scroll-performance"><a class="header" href="#q57-scroll-performance">Q57: Scroll Performance</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q58-rendering-pipeline"><a class="header" href="#q58-rendering-pipeline">Q58: Rendering Pipeline</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q59-uikit-vs-swiftui"><a class="header" href="#q59-uikit-vs-swiftui">Q59: UIKit vs SwiftUI</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q60-mixing-uikit--swiftui"><a class="header" href="#q60-mixing-uikit--swiftui">Q60: Mixing UIKit + SwiftUI</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q61-urlsession-flow"><a class="header" href="#q61-urlsession-flow">Q61: URLSession Flow</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q62-datatask-vs-downloadtask"><a class="header" href="#q62-datatask-vs-downloadtask">Q62: DataTask vs DownloadTask</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q63-json-decoding"><a class="header" href="#q63-json-decoding">Q63: JSON Decoding</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q64-error-handling"><a class="header" href="#q64-error-handling">Q64: Error Handling</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q65-http-caching"><a class="header" href="#q65-http-caching">Q65: HTTP Caching</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q66-urlrequests"><a class="header" href="#q66-urlrequests">Q66: URLRequests</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q67-rest-vs-graphql"><a class="header" href="#q67-rest-vs-graphql">Q67: REST vs GraphQL</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q68-status-codes"><a class="header" href="#q68-status-codes">Q68: Status Codes</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q69-retry-mechanism"><a class="header" href="#q69-retry-mechanism">Q69: Retry Mechanism</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q70-debouncing"><a class="header" href="#q70-debouncing">Q70: Debouncing</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="swift--language-quiz"><a class="header" href="#swift--language-quiz">Swift &amp; Language Quiz</a></h1>
+<p>Test your mastery of Swift fundamentals (Q1-Q20)</p>
+<h2 id="-multiple-choice"><a class="header" href="#-multiple-choice">📝 Multiple Choice</a></h2>
+<h3 id="question-1"><a class="header" href="#question-1">Question 1</a></h3>
+<p>What happens when you assign a struct to another variable?</p>
+<p>A) A reference is shared<br />
+B) A copy is created<br />
+C) A pointer is created<br />
+D) Compiler error</p>
+<details>
+<summary>Answer</summary>
+<p><strong>B) A copy is created</strong></p>
+<p>Structs are value types, so assignment creates a complete copy.</p>
+</details>
+<hr />
+<h3 id="question-2"><a class="header" href="#question-2">Question 2</a></h3>
+<p>Which is true about ARC?</p>
+<p>A) Works at runtime like garbage collection<br />
+B) Only works with structs<br />
+C) Inserts retain/release at compile time<br />
+D) Requires manual memory management</p>
+<details>
+<summary>Answer</summary>
+<p><strong>C) Inserts retain/release at compile time</strong></p>
+<p>ARC is a compile-time feature that automatically manages reference counting.</p>
+</details>
+<hr />
+<h3 id="question-3"><a class="header" href="#question-3">Question 3</a></h3>
+<p>What's the output?</p>
+<pre><code class="language-swift">class Box {
+    var value: Int
+    init(value: Int) { self.value = value }
+}
+
+let box = Box(value: 10)
+box.value = 20
+print(box.value)
+</code></pre>
+<p>A) Compiler error<br />
+B) 10<br />
+C) 20<br />
+D) nil</p>
+<details>
+<summary>Answer</summary>
+<p><strong>C) 20</strong></p>
+<p><code>let</code> makes the reference constant, not the object's properties.</p>
+</details>
+<hr />
+<h2 id="-code-challenges"><a class="header" href="#-code-challenges">💻 Code Challenges</a></h2>
+<h3 id="challenge-1-fix-the-retain-cycle"><a class="header" href="#challenge-1-fix-the-retain-cycle">Challenge 1: Fix the Retain Cycle</a></h3>
+<pre><code class="language-swift">class Parent {
+    var child: Child?
+    deinit { print("Parent gone") }
+}
+
+class Child {
+    var parent: Parent?
+    deinit { print("Child gone") }
+}
+
+var p: Parent? = Parent()
+var c: Child? = Child()
+p?.child = c
+c?.parent = p
+p = nil
+c = nil
+// Nothing prints! Fix it.
+</code></pre>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">class Parent {
+    var child: Child?
+    deinit { print("Parent gone") }
+}
+
+class Child {
+    weak var parent: Parent?  // ✅ Use weak
+    deinit { print("Child gone") }
+}
+</code></pre>
+</details>
+<hr />
+<h3 id="challenge-2-implement-a-generic-stack"><a class="header" href="#challenge-2-implement-a-generic-stack">Challenge 2: Implement a Generic Stack</a></h3>
+<p>Create a generic <code>Stack&lt;T&gt;</code> with:</p>
+<ul>
+<li><code>push(_ item: T)</code></li>
+<li><code>pop() -&gt; T?</code></li>
+<li><code>peek() -&gt; T?</code></li>
+<li><code>isEmpty: Bool</code></li>
+</ul>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">struct Stack&lt;T&gt; {
+    private var items: [T] = []
+    
+    mutating func push(_ item: T) {
+        items.append(item)
+    }
+    
+    mutating func pop() -&gt; T? {
+        items.popLast()
+    }
+    
+    func peek() -&gt; T? {
+        items.last
+    }
+    
+    var isEmpty: Bool {
+        items.isEmpty
+    }
+}
+
+// Test
+var stack = Stack&lt;Int&gt;()
+stack.push(1)
+stack.push(2)
+print(stack.pop())  // Optional(2)
+print(stack.peek()) // Optional(1)
+</code></pre>
+</details>
+<hr />
+<h3 id="challenge-3-protocol-with-associated-type"><a class="header" href="#challenge-3-protocol-with-associated-type">Challenge 3: Protocol with Associated Type</a></h3>
+<p>Create a <code>Container</code> protocol with:</p>
+<ul>
+<li>Associated type <code>Item</code></li>
+<li><code>add(_ item: Item)</code></li>
+<li><code>count: Int</code></li>
+</ul>
+<p>Implement it for an <code>IntContainer</code>.</p>
+<details>
+<summary>Solution</summary>
+<pre><code class="language-swift">protocol Container {
+    associatedtype Item
+    mutating func add(_ item: Item)
+    var count: Int { get }
+}
+
+struct IntContainer: Container {
+    typealias Item = Int
+    private var items: [Int] = []
+    
+    mutating func add(_ item: Int) {
+        items.append(item)
+    }
+    
+    var count: Int {
+        items.count
+    }
+}
+</code></pre>
+</details>
+<hr />
+<h2 id="-scenario-questions"><a class="header" href="#-scenario-questions">🎯 Scenario Questions</a></h2>
+<h3 id="scenario-1-memory-leak-detective"><a class="header" href="#scenario-1-memory-leak-detective">Scenario 1: Memory Leak Detective</a></h3>
+<p>You have a view controller that never deallocates. The code:</p>
+<pre><code class="language-swift">class ProfileVC: UIViewController {
+    var user: User?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        NetworkManager.shared.fetchUser { user in
+            self.user = user
+            self.updateUI()
+        }
+    }
+    
+    func updateUI() {
+        // Update UI
+    }
+}
+</code></pre>
+<p><strong>Question</strong>: What's causing the leak and how do you fix it?</p>
+<details>
+<summary>Answer</summary>
+<p>The closure captures <code>self</code> strongly. If <code>NetworkManager</code> holds onto the closure, it creates a retain cycle.</p>
+<p><strong>Fix</strong>:</p>
+<pre><code class="language-swift">NetworkManager.shared.fetchUser { [weak self] user in
+    self?.user = user
+    self?.updateUI()
+}
+</code></pre>
+</details>
+<hr />
+<h2 id="-score-yourself"><a class="header" href="#-score-yourself">📊 Score Yourself</a></h2>
+<ul>
+<li><strong>0-5 correct</strong>: Review the Swift fundamentals section</li>
+<li><strong>6-10 correct</strong>: Good foundation, practice more</li>
+<li><strong>11-15 correct</strong>: Strong understanding</li>
+<li><strong>16+ correct</strong>: Interview ready! 🎉</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="quizzes/./concurrency-quiz.html">Concurrency Quiz →</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="concurrency-quiz"><a class="header" href="#concurrency-quiz">Concurrency Quiz</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="memory-quiz"><a class="header" href="#memory-quiz">Memory Quiz</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ui-quiz"><a class="header" href="#ui-quiz">UI Quiz</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="networking-quiz"><a class="header" href="#networking-quiz">Networking Quiz</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="final-challenge"><a class="header" href="#final-challenge">Final Challenge</a></h1>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
