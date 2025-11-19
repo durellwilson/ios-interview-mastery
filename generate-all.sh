@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Q4: Strong, Weak, Unowned
+cat > src/swift/04-reference-types.md << 'EOF'
 # Q4: Strong, Weak, Unowned
 
 ## 🎯 The Answer
@@ -48,3 +52,8 @@ Create Parent/Child classes where child has weak reference to parent.
 ---
 
 **Next**: [Q5: Retain Cycles →](./05-retain-cycles.md)
+EOF
+
+# Continue for all other questions...
+echo "Generated Q4"
+

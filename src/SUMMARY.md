@@ -1,6 +1,7 @@
 # Summary
 
 [Introduction](./introduction.md)
+[🎴 Flashcards - All 70 Questions](./flashcards.md)
 
 # Swift & Language (1-20)
 
