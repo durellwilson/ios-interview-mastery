@@ -2,41 +2,51 @@
 
 ## 🎯 The Answer
 
-Query optional properties with ?, returns nil if any part is nil
+Optional chaining queries optional properties, methods, and subscripts with ?. Returns nil if any part of the chain is nil.
 
 ## 📖 Deep Dive
 
 ```swift
-// Example code demonstrating the concept
+struct Address {
+    var street: String
+}
+
+struct Person {
+    var address: Address?
+}
+
+let person = Person(address: nil)
+
+// Optional chaining
+let street = person.address?.street  // nil (String?)
+
+// vs Forced unwrapping
+// let street = person.address!.street  // ❌ Crash!
+
+// Chaining multiple levels
+struct Company {
+    var ceo: Person?
+}
+
+let company = Company(ceo: Person(address: Address(street: "Main St")))
+let ceoStreet = company.ceo?.address?.street  // Optional("Main St")
+
+// Method calls
+class Counter {
+    var count = 0
+    func increment() { count += 1 }
+}
+
+var counter: Counter? = Counter()
+counter?.increment()  // Calls if not nil
 ```
-
-## ⚠️ Common Pitfalls
-
-Common mistakes and how to avoid them.
-
-## 🎤 Interview Tips
-
-How to answer this confidently in an interview.
-
-## 🏋️ Practice Challenge
-
-Hands-on coding challenge to prove mastery.
-
-<details>
-<summary>Solution</summary>
-
-```swift
-// Solution code
-```
-
-</details>
 
 ## ✅ Mastery Checklist
 
-- [ ] Understand core concept
-- [ ] Can write code examples
-- [ ] Can explain to others
+- [ ] Understand ? operator
+- [ ] Know nil propagation
+- [ ] Can chain multiple levels
 
 ---
 
-**Next**: Next question →
+**Next**: [Q20: Computed vs Stored Properties →](./20-properties.md)

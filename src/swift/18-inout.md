@@ -2,41 +2,42 @@
 
 ## 🎯 The Answer
 
-Pass parameter by reference, allowing function to modify original value
+inout allows functions to modify parameter values, passing by reference instead of by value. Creates copy-in, copy-out behavior.
 
 ## 📖 Deep Dive
 
 ```swift
-// Example code demonstrating the concept
+func increment(_ value: inout Int) {
+    value += 1
+}
+
+var number = 5
+increment(&number)  // Must use &
+print(number)  // 6
+
+// Swap function
+func swap<T>(_ a: inout T, _ b: inout T) {
+    let temp = a
+    a = b
+    b = temp
+}
+
+var x = 1, y = 2
+swap(&x, &y)
+print(x, y)  // 2, 1
+
+// Can't pass constants or literals
+// increment(&5)  // ❌ Error
+let constant = 10
+// increment(&constant)  // ❌ Error
 ```
-
-## ⚠️ Common Pitfalls
-
-Common mistakes and how to avoid them.
-
-## 🎤 Interview Tips
-
-How to answer this confidently in an interview.
-
-## 🏋️ Practice Challenge
-
-Hands-on coding challenge to prove mastery.
-
-<details>
-<summary>Solution</summary>
-
-```swift
-// Solution code
-```
-
-</details>
 
 ## ✅ Mastery Checklist
 
-- [ ] Understand core concept
-- [ ] Can write code examples
-- [ ] Can explain to others
+- [ ] Understand inout keyword
+- [ ] Know & syntax
+- [ ] Can modify parameters
 
 ---
 
-**Next**: Next question →
+**Next**: [Q19: Optional Chaining →](./19-optional-chaining.md)

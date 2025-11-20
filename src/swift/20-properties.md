@@ -1,42 +1,74 @@
-# Q20: Properties
+# Q20: Computed vs Stored Properties
 
 ## 🎯 The Answer
 
-Stored hold values, computed calculate on access
+**Stored**: Hold values in memory
+**Computed**: Calculate values on access, no storage
 
 ## 📖 Deep Dive
 
 ```swift
-// Example code demonstrating the concept
+struct Rectangle {
+    // Stored properties
+    var width: Double
+    var height: Double
+    
+    // Computed property
+    var area: Double {
+        width * height
+    }
+    
+    // Computed with getter and setter
+    var perimeter: Double {
+        get {
+            2 * (width + height)
+        }
+        set {
+            // newValue is implicit
+            let side = newValue / 4
+            width = side
+            height = side
+        }
+    }
+}
+
+var rect = Rectangle(width: 10, height: 5)
+print(rect.area)  // 50 (calculated)
+rect.perimeter = 40  // Sets width and height
+
+// Property observers
+struct StepCounter {
+    var steps: Int = 0 {
+        willSet {
+            print("About to set to \(newValue)")
+        }
+        didSet {
+            print("Changed from \(oldValue) to \(steps)")
+        }
+    }
+}
+
+// Lazy stored property
+class DataManager {
+    lazy var data: [String] = {
+        print("Loading data...")
+        return ["Item 1", "Item 2"]
+    }()
+}
+
+let manager = DataManager()
+// "Loading data..." not printed yet
+print(manager.data)  // Now it loads
 ```
-
-## ⚠️ Common Pitfalls
-
-Common mistakes and how to avoid them.
-
-## 🎤 Interview Tips
-
-How to answer this confidently in an interview.
-
-## 🏋️ Practice Challenge
-
-Hands-on coding challenge to prove mastery.
-
-<details>
-<summary>Solution</summary>
-
-```swift
-// Solution code
-```
-
-</details>
 
 ## ✅ Mastery Checklist
 
-- [ ] Understand core concept
-- [ ] Can write code examples
-- [ ] Can explain to others
+- [ ] Know stored vs computed
+- [ ] Understand property observers
+- [ ] Can use lazy properties
 
 ---
 
-**Next**: Next question →
+**Congratulations!** You've completed Swift & Language (Q1-20)
+
+**Next Section**: [Q21: Concurrency - GCD →](../concurrency/21-gcd.md)

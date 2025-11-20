@@ -2,41 +2,47 @@
 
 ## 🎯 The Answer
 
-Automatically wraps expression in closure, delays evaluation
+@autoclosure automatically wraps an expression in a closure, delaying its evaluation. Used for short-circuit evaluation and lazy execution.
 
 ## 📖 Deep Dive
 
 ```swift
-// Example code demonstrating the concept
+// Without autoclosure
+func assert(_ condition: () -> Bool, message: String) {
+    if !condition() {
+        print(message)
+    }
+}
+
+assert({ 2 + 2 == 4 }, message: "Math broken")  // Verbose
+
+// With autoclosure
+func assert(_ condition: @autoclosure () -> Bool, message: String) {
+    if !condition() {
+        print(message)
+    }
+}
+
+assert(2 + 2 == 4, message: "Math broken")  // Clean!
+
+// Real-world: Optional coalescing
+func ?? <T>(optional: T?, defaultValue: @autoclosure () -> T) -> T {
+    if let value = optional {
+        return value
+    }
+    return defaultValue()  // Only evaluated if needed
+}
+
+let name: String? = nil
+let result = name ?? expensiveOperation()  // Only called if name is nil
 ```
-
-## ⚠️ Common Pitfalls
-
-Common mistakes and how to avoid them.
-
-## 🎤 Interview Tips
-
-How to answer this confidently in an interview.
-
-## 🏋️ Practice Challenge
-
-Hands-on coding challenge to prove mastery.
-
-<details>
-<summary>Solution</summary>
-
-```swift
-// Solution code
-```
-
-</details>
 
 ## ✅ Mastery Checklist
 
-- [ ] Understand core concept
-- [ ] Can write code examples
-- [ ] Can explain to others
+- [ ] Understand @autoclosure
+- [ ] Know lazy evaluation
+- [ ] Can use appropriately
 
 ---
 
-**Next**: Next question →
+**Next**: [Q18: Inout →](./18-inout.md)
