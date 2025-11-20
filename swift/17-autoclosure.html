@@ -181,32 +181,48 @@
                     <main>
                         <h1 id="q17-autoclosure"><a class="header" href="#q17-autoclosure">Q17: Autoclosure</a></h1>
 <h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
-<p>Automatically wraps expression in closure, delays evaluation</p>
+<p>@autoclosure automatically wraps an expression in a closure, delaying its evaluation. Used for short-circuit evaluation and lazy execution.</p>
 <h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// Without autoclosure
+func assert(_ condition: () -&gt; Bool, message: String) {
+    if !condition() {
+        print(message)
+    }
+}
+
+assert({ 2 + 2 == 4 }, message: &quot;Math broken&quot;)  // Verbose
+
+// With autoclosure
+func assert(_ condition: @autoclosure () -&gt; Bool, message: String) {
+    if !condition() {
+        print(message)
+    }
+}
+
+assert(2 + 2 == 4, message: &quot;Math broken&quot;)  // Clean!
+
+// Real-world: Optional coalescing
+func ?? &lt;T&gt;(optional: T?, defaultValue: @autoclosure () -&gt; T) -&gt; T {
+    if let value = optional {
+        return value
+    }
+    return defaultValue()  // Only evaluated if needed
+}
+
+let name: String? = nil
+let result = name ?? expensiveOperation()  // Only called if name is nil
 </code></pre>
-<h2 id="-common-pitfalls"><a class="header" href="#-common-pitfalls">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
-<h2 id="-interview-tips"><a class="header" href="#-interview-tips">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge"><a class="header" href="#-practice-challenge">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
 <h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Understand @autoclosure</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know lazy evaluation</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can use appropriately</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="./18-inout.html">Q18: Inout →</a></p>
 
                     </main>
 

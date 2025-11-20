@@ -2302,228 +2302,426 @@ Understand generic constraints</li>
 <p><strong>Next</strong>: <a href="swift/./13-extensions.html">Q13: Extensions →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q13-extensions"><a class="header" href="#q13-extensions">Q13: Extensions</a></h1>
 <h2 id="-the-answer-11"><a class="header" href="#-the-answer-11">🎯 The Answer</a></h2>
-<p>Add functionality to existing types without subclassing</p>
+<p>Extensions add functionality to existing types without subclassing or modifying source code. Can add methods, computed properties, initializers, and protocol conformance.</p>
 <h2 id="-deep-dive-11"><a class="header" href="#-deep-dive-11">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// Add methods to existing types
+extension String {
+    func trimmed() -&gt; String {
+        trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    var isEmail: Bool {
+        contains(&quot;@&quot;) &amp;&amp; contains(&quot;.&quot;)
+    }
+}
+
+&quot;  hello  &quot;.trimmed()  // &quot;hello&quot;
+&quot;test@example.com&quot;.isEmail  // true
+
+// Add computed properties
+extension Int {
+    var squared: Int {
+        self * self
+    }
+    
+    var isEven: Bool {
+        self % 2 == 0
+    }
+}
+
+5.squared  // 25
+4.isEven   // true
+
+// Add initializers
+extension UIColor {
+    convenience init(hex: String) {
+        // Parse hex string
+        self.init(red: 1, green: 0, blue: 0, alpha: 1)
+    }
+}
+
+// Protocol conformance
+extension Array: Identifiable where Element: Identifiable {
+    var id: String {
+        map { $0.id }.joined()
+    }
+}
+
+// Conditional extensions
+extension Array where Element: Numeric {
+    func sum() -&gt; Element {
+        reduce(0, +)
+    }
+}
+
+[1, 2, 3].sum()  // 6
 </code></pre>
-<h2 id="-common-pitfalls-9"><a class="header" href="#-common-pitfalls-9">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-11"><a class="header" href="#-interview-tips-11">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-7"><a class="header" href="#-practice-challenge-7">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Extensions let me add functionality to types I don't own, like String or Int. I use them to organize code, add protocol conformance, and provide convenience methods. They can't add stored properties or override existing methods.&quot;</p>
 <h2 id="-mastery-checklist-12"><a class="header" href="#-mastery-checklist-12">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Can create extensions</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know limitations (no stored properties)</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Understand conditional extensions</li>
+<li><input disabled="" type="checkbox"/>
+Can add protocol conformance</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="q14-static-vs-class"><a class="header" href="#q14-static-vs-class">Q14: Static vs Class</a></h1>
+<p><strong>Next</strong>: <a href="swift/./14-static-vs-class.html">Q14: Static vs Class Methods →</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q14-static-vs-class-methods"><a class="header" href="#q14-static-vs-class-methods">Q14: Static vs Class Methods</a></h1>
 <h2 id="-the-answer-12"><a class="header" href="#-the-answer-12">🎯 The Answer</a></h2>
-<p>static can't be overridden, class can be overridden in subclasses</p>
+<p><strong>static</strong>: Cannot be overridden in subclasses
+<strong>class</strong>: Can be overridden in subclasses (classes only)</p>
 <h2 id="-deep-dive-12"><a class="header" href="#-deep-dive-12">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">class Vehicle {
+    static func staticMethod() {
+        print(&quot;Vehicle static&quot;)
+    }
+    
+    class func classMethod() {
+        print(&quot;Vehicle class&quot;)
+    }
+}
+
+class Car: Vehicle {
+    // Can't override static
+    // override static func staticMethod() { }  // ❌ Error
+    
+    // Can override class
+    override class func classMethod() {
+        print(&quot;Car class&quot;)
+    }
+}
+
+Vehicle.staticMethod()  // &quot;Vehicle static&quot;
+Car.staticMethod()      // &quot;Vehicle static&quot; (inherited)
+
+Vehicle.classMethod()   // &quot;Vehicle class&quot;
+Car.classMethod()       // &quot;Car class&quot; (overridden)
+
+// Static properties
+struct Config {
+    static let apiKey = &quot;abc123&quot;
+    static var baseURL = &quot;https://api.example.com&quot;
+}
+
+Config.apiKey  // &quot;abc123&quot;
 </code></pre>
-<h2 id="-common-pitfalls-10"><a class="header" href="#-common-pitfalls-10">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-12"><a class="header" href="#-interview-tips-12">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-8"><a class="header" href="#-practice-challenge-8">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Static methods and properties belong to the type, not instances. Static can't be overridden, while class methods can be overridden in subclasses. I use static for utility functions and constants, class for factory methods that subclasses might customize.&quot;</p>
 <h2 id="-mastery-checklist-13"><a class="header" href="#-mastery-checklist-13">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Know static vs class difference</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Understand override capability</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can use type properties</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./15-closures.html">Q15: Closures →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q15-closures"><a class="header" href="#q15-closures">Q15: Closures</a></h1>
 <h2 id="-the-answer-13"><a class="header" href="#-the-answer-13">🎯 The Answer</a></h2>
-<p>Self-contained blocks of code that can capture values from context</p>
+<p>Closures are self-contained blocks of code that can capture and store references to variables and constants from their surrounding context.</p>
 <h2 id="-deep-dive-13"><a class="header" href="#-deep-dive-13">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// Closure syntax
+let greet = { (name: String) -&gt; String in
+    return &quot;Hello, \(name)&quot;
+}
+
+greet(&quot;Alice&quot;)  // &quot;Hello, Alice&quot;
+
+// Trailing closure
+[1, 2, 3].map { $0 * 2 }  // [2, 4, 6]
+
+// Capturing values
+func makeIncrementer(amount: Int) -&gt; () -&gt; Int {
+    var total = 0
+    return {
+        total += amount
+        return total
+    }
+}
+
+let incrementByTwo = makeIncrementer(amount: 2)
+incrementByTwo()  // 2
+incrementByTwo()  // 4
+
+// Closure as parameter
+func performOperation(_ operation: (Int, Int) -&gt; Int) {
+    let result = operation(5, 3)
+    print(result)
+}
+
+performOperation { $0 + $1 }  // 8
 </code></pre>
-<h2 id="-common-pitfalls-11"><a class="header" href="#-common-pitfalls-11">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-13"><a class="header" href="#-interview-tips-13">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-9"><a class="header" href="#-practice-challenge-9">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Closures are like anonymous functions that can capture values from their context. They're used for callbacks, completion handlers, and functional programming. Swift has three types: global functions, nested functions, and closure expressions.&quot;</p>
 <h2 id="-mastery-checklist-14"><a class="header" href="#-mastery-checklist-14">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Understand closure syntax</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know value capturing</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can use trailing closures</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./16-escaping-closures.html">Q16: Escaping vs Non-Escaping →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q16-escaping-vs-non-escaping"><a class="header" href="#q16-escaping-vs-non-escaping">Q16: Escaping vs Non-Escaping</a></h1>
 <h2 id="-the-answer-14"><a class="header" href="#-the-answer-14">🎯 The Answer</a></h2>
-<p>Non-escaping executes before return, escaping can outlive function</p>
+<p><strong>Non-escaping</strong> (default): Closure executed before function returns
+<strong>Escaping</strong> (@escaping): Closure can outlive the function, stored or called later</p>
 <h2 id="-deep-dive-14"><a class="header" href="#-deep-dive-14">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// Non-escaping (default)
+func performSync(completion: () -&gt; Void) {
+    completion()  // Called immediately
+}  // completion can't be used after return
+
+// Escaping
+func performAsync(completion: @escaping () -&gt; Void) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        completion()  // Called after function returns
+    }
+}
+
+// Stored closure must be escaping
+class ViewController {
+    var completion: (() -&gt; Void)?
+    
+    func setup(completion: @escaping () -&gt; Void) {
+        self.completion = completion  // Stored
+    }
+}
+
+// Escaping requires explicit self
+class Manager {
+    var name = &quot;Manager&quot;
+    
+    func start(completion: @escaping () -&gt; Void) {
+        DispatchQueue.main.async {
+            print(self.name)  // Must use self
+            completion()
+        }
+    }
+}
 </code></pre>
-<h2 id="-common-pitfalls-12"><a class="header" href="#-common-pitfalls-12">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
 <h2 id="-interview-tips-14"><a class="header" href="#-interview-tips-14">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-10"><a class="header" href="#-practice-challenge-10">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
+<p>&quot;Non-escaping closures are executed before the function returns, so they're safer and more efficient. Escaping closures can outlive the function - used for async operations, stored properties, or callbacks. Escaping closures require explicit self to avoid accidental retain cycles.&quot;</p>
 <h2 id="-mastery-checklist-15"><a class="header" href="#-mastery-checklist-15">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Know default is non-escaping</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Understand when to use @escaping</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Know self requirement</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./17-autoclosure.html">Q17: Autoclosure →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q17-autoclosure"><a class="header" href="#q17-autoclosure">Q17: Autoclosure</a></h1>
 <h2 id="-the-answer-15"><a class="header" href="#-the-answer-15">🎯 The Answer</a></h2>
-<p>Automatically wraps expression in closure, delays evaluation</p>
+<p>@autoclosure automatically wraps an expression in a closure, delaying its evaluation. Used for short-circuit evaluation and lazy execution.</p>
 <h2 id="-deep-dive-15"><a class="header" href="#-deep-dive-15">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">// Without autoclosure
+func assert(_ condition: () -&gt; Bool, message: String) {
+    if !condition() {
+        print(message)
+    }
+}
+
+assert({ 2 + 2 == 4 }, message: &quot;Math broken&quot;)  // Verbose
+
+// With autoclosure
+func assert(_ condition: @autoclosure () -&gt; Bool, message: String) {
+    if !condition() {
+        print(message)
+    }
+}
+
+assert(2 + 2 == 4, message: &quot;Math broken&quot;)  // Clean!
+
+// Real-world: Optional coalescing
+func ?? &lt;T&gt;(optional: T?, defaultValue: @autoclosure () -&gt; T) -&gt; T {
+    if let value = optional {
+        return value
+    }
+    return defaultValue()  // Only evaluated if needed
+}
+
+let name: String? = nil
+let result = name ?? expensiveOperation()  // Only called if name is nil
 </code></pre>
-<h2 id="-common-pitfalls-13"><a class="header" href="#-common-pitfalls-13">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
-<h2 id="-interview-tips-15"><a class="header" href="#-interview-tips-15">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-11"><a class="header" href="#-practice-challenge-11">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
 <h2 id="-mastery-checklist-16"><a class="header" href="#-mastery-checklist-16">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Understand @autoclosure</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know lazy evaluation</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can use appropriately</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./18-inout.html">Q18: Inout →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q18-inout"><a class="header" href="#q18-inout">Q18: Inout</a></h1>
 <h2 id="-the-answer-16"><a class="header" href="#-the-answer-16">🎯 The Answer</a></h2>
-<p>Pass parameter by reference, allowing function to modify original value</p>
+<p>inout allows functions to modify parameter values, passing by reference instead of by value. Creates copy-in, copy-out behavior.</p>
 <h2 id="-deep-dive-16"><a class="header" href="#-deep-dive-16">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">func increment(_ value: inout Int) {
+    value += 1
+}
+
+var number = 5
+increment(&amp;number)  // Must use &amp;
+print(number)  // 6
+
+// Swap function
+func swap&lt;T&gt;(_ a: inout T, _ b: inout T) {
+    let temp = a
+    a = b
+    b = temp
+}
+
+var x = 1, y = 2
+swap(&amp;x, &amp;y)
+print(x, y)  // 2, 1
+
+// Can't pass constants or literals
+// increment(&amp;5)  // ❌ Error
+let constant = 10
+// increment(&amp;constant)  // ❌ Error
 </code></pre>
-<h2 id="-common-pitfalls-14"><a class="header" href="#-common-pitfalls-14">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
-<h2 id="-interview-tips-16"><a class="header" href="#-interview-tips-16">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-12"><a class="header" href="#-practice-challenge-12">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
 <h2 id="-mastery-checklist-17"><a class="header" href="#-mastery-checklist-17">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Understand inout keyword</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know &amp; syntax</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can modify parameters</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Next</strong>: <a href="swift/./19-optional-chaining.html">Q19: Optional Chaining →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q19-optional-chaining"><a class="header" href="#q19-optional-chaining">Q19: Optional Chaining</a></h1>
 <h2 id="-the-answer-17"><a class="header" href="#-the-answer-17">🎯 The Answer</a></h2>
-<p>Query optional properties with ?, returns nil if any part is nil</p>
+<p>Optional chaining queries optional properties, methods, and subscripts with ?. Returns nil if any part of the chain is nil.</p>
 <h2 id="-deep-dive-17"><a class="header" href="#-deep-dive-17">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">struct Address {
+    var street: String
+}
+
+struct Person {
+    var address: Address?
+}
+
+let person = Person(address: nil)
+
+// Optional chaining
+let street = person.address?.street  // nil (String?)
+
+// vs Forced unwrapping
+// let street = person.address!.street  // ❌ Crash!
+
+// Chaining multiple levels
+struct Company {
+    var ceo: Person?
+}
+
+let company = Company(ceo: Person(address: Address(street: &quot;Main St&quot;)))
+let ceoStreet = company.ceo?.address?.street  // Optional(&quot;Main St&quot;)
+
+// Method calls
+class Counter {
+    var count = 0
+    func increment() { count += 1 }
+}
+
+var counter: Counter? = Counter()
+counter?.increment()  // Calls if not nil
 </code></pre>
-<h2 id="-common-pitfalls-15"><a class="header" href="#-common-pitfalls-15">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
-<h2 id="-interview-tips-17"><a class="header" href="#-interview-tips-17">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-13"><a class="header" href="#-practice-challenge-13">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
 <h2 id="-mastery-checklist-18"><a class="header" href="#-mastery-checklist-18">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Understand ? operator</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Know nil propagation</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can chain multiple levels</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="q20-properties"><a class="header" href="#q20-properties">Q20: Properties</a></h1>
+<p><strong>Next</strong>: <a href="swift/./20-properties.html">Q20: Computed vs Stored Properties →</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q20-computed-vs-stored-properties"><a class="header" href="#q20-computed-vs-stored-properties">Q20: Computed vs Stored Properties</a></h1>
 <h2 id="-the-answer-18"><a class="header" href="#-the-answer-18">🎯 The Answer</a></h2>
-<p>Stored hold values, computed calculate on access</p>
+<p><strong>Stored</strong>: Hold values in memory
+<strong>Computed</strong>: Calculate values on access, no storage</p>
 <h2 id="-deep-dive-18"><a class="header" href="#-deep-dive-18">📖 Deep Dive</a></h2>
-<pre><code class="language-swift">// Example code demonstrating the concept
+<pre><code class="language-swift">struct Rectangle {
+    // Stored properties
+    var width: Double
+    var height: Double
+    
+    // Computed property
+    var area: Double {
+        width * height
+    }
+    
+    // Computed with getter and setter
+    var perimeter: Double {
+        get {
+            2 * (width + height)
+        }
+        set {
+            // newValue is implicit
+            let side = newValue / 4
+            width = side
+            height = side
+        }
+    }
+}
+
+var rect = Rectangle(width: 10, height: 5)
+print(rect.area)  // 50 (calculated)
+rect.perimeter = 40  // Sets width and height
+
+// Property observers
+struct StepCounter {
+    var steps: Int = 0 {
+        willSet {
+            print(&quot;About to set to \(newValue)&quot;)
+        }
+        didSet {
+            print(&quot;Changed from \(oldValue) to \(steps)&quot;)
+        }
+    }
+}
+
+// Lazy stored property
+class DataManager {
+    lazy var data: [String] = {
+        print(&quot;Loading data...&quot;)
+        return [&quot;Item 1&quot;, &quot;Item 2&quot;]
+    }()
+}
+
+let manager = DataManager()
+// &quot;Loading data...&quot; not printed yet
+print(manager.data)  // Now it loads
 </code></pre>
-<h2 id="-common-pitfalls-16"><a class="header" href="#-common-pitfalls-16">⚠️ Common Pitfalls</a></h2>
-<p>Common mistakes and how to avoid them.</p>
-<h2 id="-interview-tips-18"><a class="header" href="#-interview-tips-18">🎤 Interview Tips</a></h2>
-<p>How to answer this confidently in an interview.</p>
-<h2 id="-practice-challenge-14"><a class="header" href="#-practice-challenge-14">🏋️ Practice Challenge</a></h2>
-<p>Hands-on coding challenge to prove mastery.</p>
-<details>
-<summary>Solution</summary>
-<pre><code class="language-swift">// Solution code
-</code></pre>
-</details>
 <h2 id="-mastery-checklist-19"><a class="header" href="#-mastery-checklist-19">✅ Mastery Checklist</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"/>
-Understand core concept</li>
+Know stored vs computed</li>
 <li><input disabled="" type="checkbox"/>
-Can write code examples</li>
+Understand property observers</li>
 <li><input disabled="" type="checkbox"/>
-Can explain to others</li>
+Can use lazy properties</li>
 </ul>
 <hr />
-<p><strong>Next</strong>: Next question →</p>
+<p><strong>Congratulations!</strong> You've completed Swift &amp; Language (Q1-20)</p>
+<p><strong>Next Section</strong>: <a href="swift/../concurrency/21-gcd.html">Q21: Concurrency - GCD →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q21-gcd"><a class="header" href="#q21-gcd">Q21: GCD</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q22-sync-vs-async"><a class="header" href="#q22-sync-vs-async">Q22: Sync vs Async</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q23-serial-vs-concurrent-queues"><a class="header" href="#q23-serial-vs-concurrent-queues">Q23: Serial vs Concurrent Queues</a></h1>
