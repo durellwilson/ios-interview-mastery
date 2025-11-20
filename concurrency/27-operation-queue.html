@@ -180,6 +180,47 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q27-operationqueue"><a class="header" href="#q27-operationqueue">Q27: OperationQueue</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>OperationQueue is higher-level than GCD, supporting dependencies, cancellation, and priorities.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">let queue = OperationQueue()
+
+// Block operation
+queue.addOperation {
+    print(&quot;Task&quot;)
+}
+
+// Dependencies
+let op1 = BlockOperation { print(&quot;First&quot;) }
+let op2 = BlockOperation { print(&quot;Second&quot;) }
+op2.addDependency(op1)  // op2 waits for op1
+
+queue.addOperations([op1, op2], waitUntilFinished: false)
+
+// Cancellation
+let operation = BlockOperation {
+    for i in 1...100 {
+        if operation.isCancelled { return }
+        print(i)
+    }
+}
+queue.addOperation(operation)
+operation.cancel()
+
+// Max concurrent
+queue.maxConcurrentOperationCount = 2
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know dependencies</li>
+<li><input disabled="" type="checkbox"/>
+Can cancel operations</li>
+<li><input disabled="" type="checkbox"/>
+Understand vs GCD</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./28-async-await.html">Q28: Async-Await →</a></p>
 
                     </main>
 

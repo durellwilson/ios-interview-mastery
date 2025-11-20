@@ -180,6 +180,51 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q29-actors"><a class="header" href="#q29-actors">Q29: Actors</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>Actors are reference types that protect mutable state from data races. Only one task can access actor state at a time.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">actor Counter {
+    var value = 0
+    
+    func increment() {
+        value += 1  // Thread-safe automatically
+    }
+    
+    func getValue() -&gt; Int {
+        value
+    }
+}
+
+// Usage
+let counter = Counter()
+
+Task {
+    await counter.increment()  // Must use await
+    let value = await counter.getValue()
+}
+
+// Nonisolated for synchronous access
+actor DataStore {
+    private var data: [String] = []
+    
+    nonisolated let id: String  // Can access without await
+    
+    init(id: String) {
+        self.id = id
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand actor isolation</li>
+<li><input disabled="" type="checkbox"/>
+Know await requirement</li>
+<li><input disabled="" type="checkbox"/>
+Can use nonisolated</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./30-main-actor.html">Q30: MainActor →</a></p>
 
                     </main>
 

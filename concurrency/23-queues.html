@@ -180,6 +180,53 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q23-serial-vs-concurrent-queues"><a class="header" href="#q23-serial-vs-concurrent-queues">Q23: Serial vs Concurrent Queues</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p><strong>Serial</strong>: Executes one task at a time, in order
+<strong>Concurrent</strong>: Executes multiple tasks simultaneously</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Serial queue (default)
+let serial = DispatchQueue(label: &quot;com.app.serial&quot;)
+serial.async { print(&quot;Task 1&quot;) }
+serial.async { print(&quot;Task 2&quot;) }
+serial.async { print(&quot;Task 3&quot;) }
+// Output: Task 1, Task 2, Task 3 (in order)
+
+// Concurrent queue
+let concurrent = DispatchQueue(label: &quot;com.app.concurrent&quot;, attributes: .concurrent)
+concurrent.async { print(&quot;Task 1&quot;) }
+concurrent.async { print(&quot;Task 2&quot;) }
+concurrent.async { print(&quot;Task 3&quot;) }
+// Output: Order not guaranteed
+
+// Thread-safe counter with serial queue
+class Counter {
+    private var value = 0
+    private let queue = DispatchQueue(label: &quot;counter&quot;)
+    
+    func increment() {
+        queue.async {
+            self.value += 1
+        }
+    }
+    
+    func getValue() -&gt; Int {
+        queue.sync {
+            return value
+        }
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know serial executes in order</li>
+<li><input disabled="" type="checkbox"/>
+Understand concurrent parallelism</li>
+<li><input disabled="" type="checkbox"/>
+Can choose appropriate queue</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./24-race-conditions.html">Q24: Race Conditions →</a></p>
 
                     </main>
 

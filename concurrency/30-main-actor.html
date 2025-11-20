@@ -180,6 +180,53 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q30-mainactor"><a class="header" href="#q30-mainactor">Q30: MainActor</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>MainActor is a global actor representing the main thread. Ensures UI updates happen on main thread.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Mark class
+@MainActor
+class ViewModel: ObservableObject {
+    @Published var data: [String] = []
+    
+    func loadData() {
+        // All methods run on main thread
+    }
+}
+
+// Mark function
+@MainActor
+func updateUI() {
+    label.text = &quot;Updated&quot;
+}
+
+// Switch to main
+func fetchData() async {
+    let data = await downloadData()
+    
+    await MainActor.run {
+        self.updateUI(with: data)
+    }
+}
+
+// SwiftUI views are @MainActor by default
+struct ContentView: View {
+    var body: some View {
+        Text(&quot;Hello&quot;)  // Always on main thread
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know MainActor purpose</li>
+<li><input disabled="" type="checkbox"/>
+Can annotate types/functions</li>
+<li><input disabled="" type="checkbox"/>
+Understand UI thread safety</li>
+</ul>
+<hr />
+<p><strong>Congratulations!</strong> Completed Concurrency (Q21-Q30)</p>
+<p><strong>Next Section</strong>: <a href="../memory/31-arc-allocation.html">Q31: Memory Management →</a></p>
 
                     </main>
 

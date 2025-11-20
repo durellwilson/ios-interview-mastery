@@ -2722,16 +2722,477 @@ Can use lazy properties</li>
 <hr />
 <p><strong>Congratulations!</strong> You've completed Swift &amp; Language (Q1-20)</p>
 <p><strong>Next Section</strong>: <a href="swift/../concurrency/21-gcd.html">Q21: Concurrency - GCD →</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="q21-gcd"><a class="header" href="#q21-gcd">Q21: GCD</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="q21-gcd-grand-central-dispatch"><a class="header" href="#q21-gcd-grand-central-dispatch">Q21: GCD (Grand Central Dispatch)</a></h1>
+<h2 id="-the-answer-19"><a class="header" href="#-the-answer-19">🎯 The Answer</a></h2>
+<p>GCD is Apple's low-level API for managing concurrent operations using dispatch queues. It abstracts thread management and optimizes task execution.</p>
+<h2 id="-deep-dive-19"><a class="header" href="#-deep-dive-19">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Main queue - UI updates
+DispatchQueue.main.async {
+    self.label.text = &quot;Updated&quot;
+}
+
+// Global queues - background work
+DispatchQueue.global(qos: .userInitiated).async {
+    // Heavy computation
+    let result = processData()
+    
+    DispatchQueue.main.async {
+        self.updateUI(with: result)
+    }
+}
+
+// Quality of Service levels
+DispatchQueue.global(qos: .userInteractive).async { }  // Highest priority
+DispatchQueue.global(qos: .userInitiated).async { }    // High priority
+DispatchQueue.global(qos: .default).async { }          // Default
+DispatchQueue.global(qos: .utility).async { }          // Low priority
+DispatchQueue.global(qos: .background).async { }       // Lowest priority
+
+// Custom queue
+let queue = DispatchQueue(label: &quot;com.app.myqueue&quot;)
+queue.async {
+    print(&quot;Custom queue work&quot;)
+}
+
+// Concurrent queue
+let concurrent = DispatchQueue(label: &quot;com.app.concurrent&quot;, attributes: .concurrent)
+concurrent.async { print(&quot;Task 1&quot;) }
+concurrent.async { print(&quot;Task 2&quot;) }  // Can run simultaneously
+</code></pre>
+<h2 id="-interview-tips-15"><a class="header" href="#-interview-tips-15">🎤 Interview Tips</a></h2>
+<p>&quot;GCD manages concurrent execution using queues. Main queue for UI, global queues for background work. I choose QoS based on task priority - userInteractive for UI-related, background for non-urgent tasks.&quot;</p>
+<h2 id="-mastery-checklist-20"><a class="header" href="#-mastery-checklist-20">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand dispatch queues</li>
+<li><input disabled="" type="checkbox"/>
+Know QoS levels</li>
+<li><input disabled="" type="checkbox"/>
+Can switch between queues</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./22-sync-async.html">Q22: Sync vs Async →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q22-sync-vs-async"><a class="header" href="#q22-sync-vs-async">Q22: Sync vs Async</a></h1>
+<h2 id="-the-answer-20"><a class="header" href="#-the-answer-20">🎯 The Answer</a></h2>
+<p><strong>sync</strong>: Blocks current thread until task completes
+<strong>async</strong>: Returns immediately, task runs in background</p>
+<h2 id="-deep-dive-20"><a class="header" href="#-deep-dive-20">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">let queue = DispatchQueue(label: &quot;com.app.queue&quot;)
+
+// ASYNC - Non-blocking
+print(&quot;1&quot;)
+queue.async {
+    print(&quot;2&quot;)
+}
+print(&quot;3&quot;)
+// Output: 1, 3, 2
+
+// SYNC - Blocking
+print(&quot;1&quot;)
+queue.sync {
+    print(&quot;2&quot;)
+}
+print(&quot;3&quot;)
+// Output: 1, 2, 3
+
+// Real-world: Network call
+func fetchData(completion: @escaping (Data?) -&gt; Void) {
+    DispatchQueue.global().async {
+        // Network request
+        let data = downloadData()
+        
+        DispatchQueue.main.async {
+            completion(data)
+        }
+    }
+}
+
+// Barrier for thread-safe writes
+let concurrent = DispatchQueue(label: &quot;queue&quot;, attributes: .concurrent)
+
+concurrent.async {
+    // Read operation
+}
+
+concurrent.async(flags: .barrier) {
+    // Write operation - waits for reads, blocks new reads
+}
+</code></pre>
+<h2 id="-mastery-checklist-21"><a class="header" href="#-mastery-checklist-21">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know sync blocks</li>
+<li><input disabled="" type="checkbox"/>
+Understand async returns immediately</li>
+<li><input disabled="" type="checkbox"/>
+Can use barriers</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./23-queues.html">Q23: Serial vs Concurrent Queues →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q23-serial-vs-concurrent-queues"><a class="header" href="#q23-serial-vs-concurrent-queues">Q23: Serial vs Concurrent Queues</a></h1>
+<h2 id="-the-answer-21"><a class="header" href="#-the-answer-21">🎯 The Answer</a></h2>
+<p><strong>Serial</strong>: Executes one task at a time, in order
+<strong>Concurrent</strong>: Executes multiple tasks simultaneously</p>
+<h2 id="-deep-dive-21"><a class="header" href="#-deep-dive-21">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Serial queue (default)
+let serial = DispatchQueue(label: &quot;com.app.serial&quot;)
+serial.async { print(&quot;Task 1&quot;) }
+serial.async { print(&quot;Task 2&quot;) }
+serial.async { print(&quot;Task 3&quot;) }
+// Output: Task 1, Task 2, Task 3 (in order)
+
+// Concurrent queue
+let concurrent = DispatchQueue(label: &quot;com.app.concurrent&quot;, attributes: .concurrent)
+concurrent.async { print(&quot;Task 1&quot;) }
+concurrent.async { print(&quot;Task 2&quot;) }
+concurrent.async { print(&quot;Task 3&quot;) }
+// Output: Order not guaranteed
+
+// Thread-safe counter with serial queue
+class Counter {
+    private var value = 0
+    private let queue = DispatchQueue(label: &quot;counter&quot;)
+    
+    func increment() {
+        queue.async {
+            self.value += 1
+        }
+    }
+    
+    func getValue() -&gt; Int {
+        queue.sync {
+            return value
+        }
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist-22"><a class="header" href="#-mastery-checklist-22">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know serial executes in order</li>
+<li><input disabled="" type="checkbox"/>
+Understand concurrent parallelism</li>
+<li><input disabled="" type="checkbox"/>
+Can choose appropriate queue</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./24-race-conditions.html">Q24: Race Conditions →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q24-race-conditions"><a class="header" href="#q24-race-conditions">Q24: Race Conditions</a></h1>
+<h2 id="-the-answer-22"><a class="header" href="#-the-answer-22">🎯 The Answer</a></h2>
+<p>A race condition occurs when multiple threads access shared data simultaneously, causing unpredictable results. Fixed with synchronization (serial queues, locks, actors).</p>
+<h2 id="-deep-dive-22"><a class="header" href="#-deep-dive-22">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// RACE CONDITION
+class UnsafeCounter {
+    var count = 0
+    
+    func increment() {
+        count += 1  // ❌ Not thread-safe
+    }
+}
+
+let counter = UnsafeCounter()
+DispatchQueue.concurrentPerform(iterations: 1000) { _ in
+    counter.increment()
+}
+print(counter.count)  // Not 1000! Race condition
+
+// FIX 1: Serial Queue
+class SafeCounter {
+    private var count = 0
+    private let queue = DispatchQueue(label: &quot;counter&quot;)
+    
+    func increment() {
+        queue.sync {
+            count += 1
+        }
+    }
+}
+
+// FIX 2: Actor (Swift 5.5+)
+actor ActorCounter {
+    var count = 0
+    
+    func increment() {
+        count += 1  // Automatically synchronized
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist-23"><a class="header" href="#-mastery-checklist-23">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Can identify race conditions</li>
+<li><input disabled="" type="checkbox"/>
+Know synchronization methods</li>
+<li><input disabled="" type="checkbox"/>
+Understand thread safety</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./25-deadlocks.html">Q25: Deadlocks →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q25-deadlocks"><a class="header" href="#q25-deadlocks">Q25: Deadlocks</a></h1>
+<h2 id="-the-answer-23"><a class="header" href="#-the-answer-23">🎯 The Answer</a></h2>
+<p>A deadlock occurs when two or more threads wait for each other indefinitely. Common cause: nested sync calls on same queue.</p>
+<h2 id="-deep-dive-23"><a class="header" href="#-deep-dive-23">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// DEADLOCK EXAMPLE
+let queue = DispatchQueue(label: &quot;queue&quot;)
+
+queue.sync {
+    print(&quot;Outer&quot;)
+    queue.sync {  // ❌ DEADLOCK!
+        print(&quot;Inner&quot;)
+    }
+}
+
+// FIX: Use async or different queue
+queue.async {
+    print(&quot;Outer&quot;)
+    queue.async {  // ✅ Works
+        print(&quot;Inner&quot;)
+    }
+}
+
+// Avoid on main queue
+DispatchQueue.main.sync {  // ❌ Deadlock if called from main
+    print(&quot;This will hang&quot;)
+}
+</code></pre>
+<h2 id="-mastery-checklist-24"><a class="header" href="#-mastery-checklist-24">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand deadlock causes</li>
+<li><input disabled="" type="checkbox"/>
+Can avoid nested sync</li>
+<li><input disabled="" type="checkbox"/>
+Know prevention strategies</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./26-dispatch-group.html">Q26: DispatchGroup →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q26-dispatchgroup"><a class="header" href="#q26-dispatchgroup">Q26: DispatchGroup</a></h1>
+<h2 id="-the-answer-24"><a class="header" href="#-the-answer-24">🎯 The Answer</a></h2>
+<p>DispatchGroup coordinates multiple async tasks, notifying when all complete.</p>
+<h2 id="-deep-dive-24"><a class="header" href="#-deep-dive-24">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">let group = DispatchGroup()
+
+// Method 1: enter/leave
+group.enter()
+fetchUser { user in
+    print(&quot;Got user&quot;)
+    group.leave()
+}
+
+group.enter()
+fetchPosts { posts in
+    print(&quot;Got posts&quot;)
+    group.leave()
+}
+
+group.notify(queue: .main) {
+    print(&quot;All done!&quot;)
+}
+
+// Method 2: Pass to async
+let queue = DispatchQueue.global()
+queue.async(group: group) {
+    // Task 1
+}
+queue.async(group: group) {
+    // Task 2
+}
+
+// Wait (blocks)
+group.wait()  // Waits until all complete
+</code></pre>
+<h2 id="-mastery-checklist-25"><a class="header" href="#-mastery-checklist-25">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Can use enter/leave</li>
+<li><input disabled="" type="checkbox"/>
+Know notify callback</li>
+<li><input disabled="" type="checkbox"/>
+Understand wait blocking</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./27-operation-queue.html">Q27: OperationQueue →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q27-operationqueue"><a class="header" href="#q27-operationqueue">Q27: OperationQueue</a></h1>
+<h2 id="-the-answer-25"><a class="header" href="#-the-answer-25">🎯 The Answer</a></h2>
+<p>OperationQueue is higher-level than GCD, supporting dependencies, cancellation, and priorities.</p>
+<h2 id="-deep-dive-25"><a class="header" href="#-deep-dive-25">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">let queue = OperationQueue()
+
+// Block operation
+queue.addOperation {
+    print(&quot;Task&quot;)
+}
+
+// Dependencies
+let op1 = BlockOperation { print(&quot;First&quot;) }
+let op2 = BlockOperation { print(&quot;Second&quot;) }
+op2.addDependency(op1)  // op2 waits for op1
+
+queue.addOperations([op1, op2], waitUntilFinished: false)
+
+// Cancellation
+let operation = BlockOperation {
+    for i in 1...100 {
+        if operation.isCancelled { return }
+        print(i)
+    }
+}
+queue.addOperation(operation)
+operation.cancel()
+
+// Max concurrent
+queue.maxConcurrentOperationCount = 2
+</code></pre>
+<h2 id="-mastery-checklist-26"><a class="header" href="#-mastery-checklist-26">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know dependencies</li>
+<li><input disabled="" type="checkbox"/>
+Can cancel operations</li>
+<li><input disabled="" type="checkbox"/>
+Understand vs GCD</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./28-async-await.html">Q28: Async-Await →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q28-async-await"><a class="header" href="#q28-async-await">Q28: Async-Await</a></h1>
+<h2 id="-the-answer-26"><a class="header" href="#-the-answer-26">🎯 The Answer</a></h2>
+<p>Modern concurrency syntax. async marks functions as asynchronous, await suspends execution until result ready.</p>
+<h2 id="-deep-dive-26"><a class="header" href="#-deep-dive-26">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Async function
+func fetchUser() async throws -&gt; User {
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try JSONDecoder().decode(User.self, from: data)
+}
+
+// Calling async
+Task {
+    do {
+        let user = try await fetchUser()
+        print(user.name)
+    } catch {
+        print(error)
+    }
+}
+
+// Async let - parallel execution
+func loadData() async {
+    async let user = fetchUser()
+    async let posts = fetchPosts()
+    
+    let (u, p) = await (user, posts)  // Wait for both
+}
+
+// MainActor for UI
+@MainActor
+func updateUI() {
+    label.text = &quot;Updated&quot;  // Guaranteed on main thread
+}
+</code></pre>
+<h2 id="-mastery-checklist-27"><a class="header" href="#-mastery-checklist-27">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand async/await</li>
+<li><input disabled="" type="checkbox"/>
+Can use Task</li>
+<li><input disabled="" type="checkbox"/>
+Know async let</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./29-actors.html">Q29: Actors →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q29-actors"><a class="header" href="#q29-actors">Q29: Actors</a></h1>
+<h2 id="-the-answer-27"><a class="header" href="#-the-answer-27">🎯 The Answer</a></h2>
+<p>Actors are reference types that protect mutable state from data races. Only one task can access actor state at a time.</p>
+<h2 id="-deep-dive-27"><a class="header" href="#-deep-dive-27">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">actor Counter {
+    var value = 0
+    
+    func increment() {
+        value += 1  // Thread-safe automatically
+    }
+    
+    func getValue() -&gt; Int {
+        value
+    }
+}
+
+// Usage
+let counter = Counter()
+
+Task {
+    await counter.increment()  // Must use await
+    let value = await counter.getValue()
+}
+
+// Nonisolated for synchronous access
+actor DataStore {
+    private var data: [String] = []
+    
+    nonisolated let id: String  // Can access without await
+    
+    init(id: String) {
+        self.id = id
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist-28"><a class="header" href="#-mastery-checklist-28">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand actor isolation</li>
+<li><input disabled="" type="checkbox"/>
+Know await requirement</li>
+<li><input disabled="" type="checkbox"/>
+Can use nonisolated</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="concurrency/./30-main-actor.html">Q30: MainActor →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q30-mainactor"><a class="header" href="#q30-mainactor">Q30: MainActor</a></h1>
+<h2 id="-the-answer-28"><a class="header" href="#-the-answer-28">🎯 The Answer</a></h2>
+<p>MainActor is a global actor representing the main thread. Ensures UI updates happen on main thread.</p>
+<h2 id="-deep-dive-28"><a class="header" href="#-deep-dive-28">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Mark class
+@MainActor
+class ViewModel: ObservableObject {
+    @Published var data: [String] = []
+    
+    func loadData() {
+        // All methods run on main thread
+    }
+}
+
+// Mark function
+@MainActor
+func updateUI() {
+    label.text = &quot;Updated&quot;
+}
+
+// Switch to main
+func fetchData() async {
+    let data = await downloadData()
+    
+    await MainActor.run {
+        self.updateUI(with: data)
+    }
+}
+
+// SwiftUI views are @MainActor by default
+struct ContentView: View {
+    var body: some View {
+        Text(&quot;Hello&quot;)  // Always on main thread
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist-29"><a class="header" href="#-mastery-checklist-29">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Know MainActor purpose</li>
+<li><input disabled="" type="checkbox"/>
+Can annotate types/functions</li>
+<li><input disabled="" type="checkbox"/>
+Understand UI thread safety</li>
+</ul>
+<hr />
+<p><strong>Congratulations!</strong> Completed Concurrency (Q21-Q30)</p>
+<p><strong>Next Section</strong>: <a href="concurrency/../memory/31-arc-allocation.html">Q31: Memory Management →</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q31-arc-memory-allocation"><a class="header" href="#q31-arc-memory-allocation">Q31: ARC Memory Allocation</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q32-weak-references"><a class="header" href="#q32-weak-references">Q32: Weak References</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="q33-unowned-references"><a class="header" href="#q33-unowned-references">Q33: Unowned References</a></h1>

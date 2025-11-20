@@ -180,6 +180,50 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q28-async-await"><a class="header" href="#q28-async-await">Q28: Async-Await</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>Modern concurrency syntax. async marks functions as asynchronous, await suspends execution until result ready.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Async function
+func fetchUser() async throws -&gt; User {
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try JSONDecoder().decode(User.self, from: data)
+}
+
+// Calling async
+Task {
+    do {
+        let user = try await fetchUser()
+        print(user.name)
+    } catch {
+        print(error)
+    }
+}
+
+// Async let - parallel execution
+func loadData() async {
+    async let user = fetchUser()
+    async let posts = fetchPosts()
+    
+    let (u, p) = await (user, posts)  // Wait for both
+}
+
+// MainActor for UI
+@MainActor
+func updateUI() {
+    label.text = &quot;Updated&quot;  // Guaranteed on main thread
+}
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand async/await</li>
+<li><input disabled="" type="checkbox"/>
+Can use Task</li>
+<li><input disabled="" type="checkbox"/>
+Know async let</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./29-actors.html">Q29: Actors →</a></p>
 
                     </main>
 

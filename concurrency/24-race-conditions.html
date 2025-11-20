@@ -180,6 +180,56 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q24-race-conditions"><a class="header" href="#q24-race-conditions">Q24: Race Conditions</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>A race condition occurs when multiple threads access shared data simultaneously, causing unpredictable results. Fixed with synchronization (serial queues, locks, actors).</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// RACE CONDITION
+class UnsafeCounter {
+    var count = 0
+    
+    func increment() {
+        count += 1  // ❌ Not thread-safe
+    }
+}
+
+let counter = UnsafeCounter()
+DispatchQueue.concurrentPerform(iterations: 1000) { _ in
+    counter.increment()
+}
+print(counter.count)  // Not 1000! Race condition
+
+// FIX 1: Serial Queue
+class SafeCounter {
+    private var count = 0
+    private let queue = DispatchQueue(label: &quot;counter&quot;)
+    
+    func increment() {
+        queue.sync {
+            count += 1
+        }
+    }
+}
+
+// FIX 2: Actor (Swift 5.5+)
+actor ActorCounter {
+    var count = 0
+    
+    func increment() {
+        count += 1  // Automatically synchronized
+    }
+}
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Can identify race conditions</li>
+<li><input disabled="" type="checkbox"/>
+Know synchronization methods</li>
+<li><input disabled="" type="checkbox"/>
+Understand thread safety</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./25-deadlocks.html">Q25: Deadlocks →</a></p>
 
                     </main>
 

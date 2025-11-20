@@ -179,7 +179,56 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="q21-gcd"><a class="header" href="#q21-gcd">Q21: GCD</a></h1>
+                        <h1 id="q21-gcd-grand-central-dispatch"><a class="header" href="#q21-gcd-grand-central-dispatch">Q21: GCD (Grand Central Dispatch)</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>GCD is Apple's low-level API for managing concurrent operations using dispatch queues. It abstracts thread management and optimizes task execution.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">// Main queue - UI updates
+DispatchQueue.main.async {
+    self.label.text = &quot;Updated&quot;
+}
+
+// Global queues - background work
+DispatchQueue.global(qos: .userInitiated).async {
+    // Heavy computation
+    let result = processData()
+    
+    DispatchQueue.main.async {
+        self.updateUI(with: result)
+    }
+}
+
+// Quality of Service levels
+DispatchQueue.global(qos: .userInteractive).async { }  // Highest priority
+DispatchQueue.global(qos: .userInitiated).async { }    // High priority
+DispatchQueue.global(qos: .default).async { }          // Default
+DispatchQueue.global(qos: .utility).async { }          // Low priority
+DispatchQueue.global(qos: .background).async { }       // Lowest priority
+
+// Custom queue
+let queue = DispatchQueue(label: &quot;com.app.myqueue&quot;)
+queue.async {
+    print(&quot;Custom queue work&quot;)
+}
+
+// Concurrent queue
+let concurrent = DispatchQueue(label: &quot;com.app.concurrent&quot;, attributes: .concurrent)
+concurrent.async { print(&quot;Task 1&quot;) }
+concurrent.async { print(&quot;Task 2&quot;) }  // Can run simultaneously
+</code></pre>
+<h2 id="-interview-tips"><a class="header" href="#-interview-tips">🎤 Interview Tips</a></h2>
+<p>&quot;GCD manages concurrent execution using queues. Main queue for UI, global queues for background work. I choose QoS based on task priority - userInteractive for UI-related, background for non-urgent tasks.&quot;</p>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Understand dispatch queues</li>
+<li><input disabled="" type="checkbox"/>
+Know QoS levels</li>
+<li><input disabled="" type="checkbox"/>
+Can switch between queues</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./22-sync-async.html">Q22: Sync vs Async →</a></p>
 
                     </main>
 

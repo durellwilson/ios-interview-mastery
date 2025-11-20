@@ -180,6 +180,51 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="q26-dispatchgroup"><a class="header" href="#q26-dispatchgroup">Q26: DispatchGroup</a></h1>
+<h2 id="-the-answer"><a class="header" href="#-the-answer">🎯 The Answer</a></h2>
+<p>DispatchGroup coordinates multiple async tasks, notifying when all complete.</p>
+<h2 id="-deep-dive"><a class="header" href="#-deep-dive">📖 Deep Dive</a></h2>
+<pre><code class="language-swift">let group = DispatchGroup()
+
+// Method 1: enter/leave
+group.enter()
+fetchUser { user in
+    print(&quot;Got user&quot;)
+    group.leave()
+}
+
+group.enter()
+fetchPosts { posts in
+    print(&quot;Got posts&quot;)
+    group.leave()
+}
+
+group.notify(queue: .main) {
+    print(&quot;All done!&quot;)
+}
+
+// Method 2: Pass to async
+let queue = DispatchQueue.global()
+queue.async(group: group) {
+    // Task 1
+}
+queue.async(group: group) {
+    // Task 2
+}
+
+// Wait (blocks)
+group.wait()  // Waits until all complete
+</code></pre>
+<h2 id="-mastery-checklist"><a class="header" href="#-mastery-checklist">✅ Mastery Checklist</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Can use enter/leave</li>
+<li><input disabled="" type="checkbox"/>
+Know notify callback</li>
+<li><input disabled="" type="checkbox"/>
+Understand wait blocking</li>
+</ul>
+<hr />
+<p><strong>Next</strong>: <a href="./27-operation-queue.html">Q27: OperationQueue →</a></p>
 
                     </main>
 
